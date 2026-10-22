@@ -1,0 +1,36 @@
+{
+  "id": "hormozi",
+  "label": "Hormozi (box)",
+  "font": "Anton",
+  "size": 100,
+  "weight": 700,
+  "case": "upper",
+  "primary": "#FFFFFF",
+  "accent": "#39FF14",
+  "chipText": "#052e05",
+  "chipRadius": 6,
+  "chipOpacity": 1,
+  "highlightMode": "chip",
+  "entrance": "pop",
+  "animScope": "line",
+  "entranceMs": 150,
+  "activeScale": 1.05,
+  "outline": {
+    "color": "#000000",
+    "width": 6
+  },
+  "shadow": 2,
+  "box": {
+    "enabled": false
+  },
+  "position": {
+    "x": 50,
+    "y": 74
+  },
+  "maxWidth": 92,
+  "segmentation": {
+    "mode": "words",
+    "max": 4
+  },
+  "tail": 0.06
+}

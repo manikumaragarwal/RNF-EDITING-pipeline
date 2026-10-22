@@ -1,0 +1,33 @@
+{
+  "id": "neon",
+  "label": "Neon Pop",
+  "font": "Baloo 2",
+  "size": 80,
+  "weight": 800,
+  "case": null,
+  "primary": "#FFFFFF",
+  "accent": "#00E5FF",
+  "highlightMode": "active",
+  "entrance": "pop",
+  "animScope": "word",
+  "entranceMs": 150,
+  "activeScale": 1.12,
+  "outline": {
+    "color": "#0A0A2A",
+    "width": 5
+  },
+  "shadow": 3,
+  "box": {
+    "enabled": false
+  },
+  "position": {
+    "x": 50,
+    "y": 78
+  },
+  "maxWidth": 86,
+  "segmentation": {
+    "mode": "words",
+    "max": 3
+  },
+  "tail": 0.06
+}

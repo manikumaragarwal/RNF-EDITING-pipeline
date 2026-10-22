@@ -1,0 +1,38 @@
+{
+  "id": "tiktok",
+  "label": "TikTok",
+  "font": "Inter",
+  "size": 56,
+  "weight": 800,
+  "case": null,
+  "primary": "#FFFFFF",
+  "accent": "#FFFFFF",
+  "highlightMode": "active",
+  "entrance": "pop",
+  "animScope": "word",
+  "entranceMs": 130,
+  "activeScale": 1.08,
+  "outline": {
+    "color": "#000000",
+    "width": 0
+  },
+  "shadow": 0,
+  "box": {
+    "enabled": true,
+    "color": "#000000",
+    "opacity": 0.38,
+    "radius": 8,
+    "padX": 16,
+    "padY": 8
+  },
+  "position": {
+    "x": 50,
+    "y": 80
+  },
+  "maxWidth": 80,
+  "segmentation": {
+    "mode": "words",
+    "max": 4
+  },
+  "tail": 0.05
+}

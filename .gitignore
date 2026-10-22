@@ -1,0 +1,23 @@
+# secrets
+.env
+.secrets/
+*.env
+!config/rnf.env.example
+*cookies*.txt
+
+# runtime
+node_modules/
+app/web/work/
+app/_renders/
+app/dist/
+app/vendor/
+archive/
+
+# media you supply / the pipeline gathers
+assets/game-assets/
+assets/sfx-pack/bg-music/*
+!assets/sfx-pack/bg-music/README.md
+!assets/sfx-pack/bg-music/music-moods.json
+*.mov
+*.mp4
+__pycache__/

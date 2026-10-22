@@ -1,0 +1,23 @@
+{
+  "id": "clean-active",
+  "label": "Clean Active",
+  "font": "Inter",
+  "size": 64,
+  "weight": 800,
+  "case": null,
+  "letterSpacing": -1,
+  "primary": "#FFFFFF",
+  "accent": "#FFD64A",
+  "highlightMode": "active",
+  "entrance": "fade",
+  "entranceMs": 160,
+  "activeScale": 1.08,
+  "activePopMs": 130,
+  "outline": { "color": "#0A0A0A", "width": 4 },
+  "shadow": 2,
+  "box": { "enabled": false },
+  "position": { "x": 50, "y": 84 },
+  "maxWidth": 88,
+  "segmentation": { "mode": "chars", "max": 24 },
+  "tail": 0.05
+}

@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>rnf automation — b-roll control</title>
+<style>
+  :root{ --bg:#0b0e14; --panel:#141924; --panel2:#1b2130; --line:#26304a; --ink:#e8edf6; --dim:#8b97ad;
+    --acc:#f2ce1f; --acc2:#4da3ff; --good:#43d17a; --bad:#ff6b6b; --win:#4da3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif}
+  h1,h2,h3{margin:0;font-weight:700}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#111623,#0d111a)}
+  .logo{font-weight:800;letter-spacing:.5px}.logo b{color:var(--acc)}
+  .tag{color:var(--dim);font-size:12px}
+  .wrap{max-width:1280px;margin:0 auto;padding:18px}
+  .btn{border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:9px 14px;border-radius:9px;cursor:pointer;font-weight:600;font-size:13px}
+  .btn:hover{border-color:var(--acc2)}
+  .btn.pri{background:var(--acc);color:#161200;border-color:var(--acc)}
+  .btn.pri:hover{filter:brightness(1.06)}
+  .btn.go{background:var(--good);color:#04240f;border-color:var(--good);font-size:15px;padding:12px 20px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.sm{padding:5px 9px;font-size:12px;border-radius:7px}
+  input,select{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 11px;font-size:14px}
+  label{color:var(--dim);font-size:12px;display:block;margin-bottom:5px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .muted{color:var(--dim)}
+  .hide{display:none!important}
+
+  /* start */
+  #start{max-width:620px;margin:8vh auto}
+  .drop{border:2px dashed var(--line);border-radius:14px;padding:34px;text-align:center;color:var(--dim);cursor:pointer;transition:.15s}
+  .drop.hot{border-color:var(--acc);color:var(--ink);background:#161c2b}
+  .row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+
+  /* progress */
+  #prep{max-width:620px;margin:10vh auto;text-align:center}
+  .bar{height:12px;background:var(--panel2);border-radius:99px;overflow:hidden;border:1px solid var(--line);margin:16px 0}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));width:0;transition:width .4s}
+  .stagelist{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+  .stagelist .s{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:99px;padding:4px 10px}
+  .stagelist .s.on{color:var(--acc);border-color:var(--acc)}
+  .stagelist .s.done{color:var(--good);border-color:var(--good)}
+
+  /* editor */
+  .editor{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:18px}
+  .player{position:relative;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:9/16;max-height:480px;max-width:270px;margin:0 auto}
+  .player video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+  .stack{display:flex;flex-direction:column;gap:14px}
+
+  /* timeline */
+  .tl{position:relative;user-select:none}
+  .ruler{position:relative;height:20px;border-bottom:1px solid var(--line);margin-bottom:6px}
+  .ruler .tick{position:absolute;top:0;font-size:10px;color:var(--dim);transform:translateX(-50%)}
+  .track{position:relative;height:64px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .capmark{position:absolute;top:0;bottom:0;width:1px;background:#2a3350}
+  .capline{position:absolute;bottom:2px;font-size:9px;white-space:nowrap;transform:translateX(-50%);color:#6a7690}
+  .winblock{position:absolute;top:8px;bottom:8px;background:rgba(77,163,255,.22);border:1.5px solid var(--win);border-radius:7px;cursor:grab;overflow:hidden}
+  .winblock.sel{border-color:var(--acc);background:rgba(242,206,31,.20);box-shadow:0 0 0 2px rgba(242,206,31,.25)}
+  .winblock .lbl{font-size:10px;padding:3px 6px;color:#dfe8f7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+  .winblock .hnd{position:absolute;top:0;bottom:0;width:9px;cursor:ew-resize}
+  .winblock .hnd.l{left:0}.winblock .hnd.r{right:0}
+  .playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--acc);pointer-events:none;z-index:5}
+
+  /* library */
+  .lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .clip{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--panel2);cursor:pointer;transition:.12s}
+  .clip:hover{border-color:var(--acc2)}
+  .clip.assign{outline:2px solid var(--acc)}
+  .clip img{width:100%;height:70px;object-fit:cover;display:block;background:#000}
+  .clip .c-meta{padding:5px 7px;font-size:11px}
+  .clip .c-meta b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .clip .c-meta span{color:var(--dim)}
+  .kind{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--acc2)}
+  .kind.upload{color:var(--good)}.kind.screenshot{color:var(--dim)}
+
+  .insp .field{margin-bottom:12px}
+  .rangewrap{display:flex;align-items:center;gap:8px}
+  input[type=range]{flex:1}
+  .pill{display:inline-block;font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:2px 9px;color:var(--dim)}
+  .sechead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  /* gallery */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .gcard{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel2);transition:.12s}
+  .gcard:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .gvid{aspect-ratio:9/16;background:#000;position:relative;max-height:260px}
+  .gvid video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
+  .gvid .gph{display:flex;align-items:center;justify-content:center;height:100%;color:var(--dim);font-size:12px}
+  .gvid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff;opacity:.85;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+  .gmeta{padding:8px 10px}
+  .gmeta b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gmeta span{font-size:11px}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111;border:1px solid var(--line);padding:10px 16px;border-radius:10px;z-index:50;opacity:0;transition:.25s}
+  .toast.on{opacity:1}
+  a.link{color:var(--acc2)}
+  .final video{max-height:70vh}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo">rest<b>.</b>not<b>.</b>found <span class="tag">· automation</span></div>
+    <div class="tag" id="crumb">everything auto — you control the b-roll</div>
+  </div>
+
+  <!-- START -->
+  <div class="wrap" id="start">
+    <div class="card">
+      <h2>New reel</h2>
+      <p class="muted" style="margin:8px 0 18px">Upload your clean-cut talking-head video and name the game. The tool auto-does captions, poster, music, SFX and tint. You then place the b-roll.</p>
+      <div class="row" style="margin-bottom:16px">
+        <div style="flex:1;min-width:220px"><label>Game name (exact spelling)</label><input id="game" placeholder="e.g. Arknights: Endfield" style="width:100%"></div>
+      </div>
+      <div class="drop" id="drop">
+        <div id="dropText"><b>Drop your cut here</b> or click to choose &nbsp;·&nbsp; 9:16 MP4/MOV</div>
+        <input type="file" id="file" accept="video/*" class="hide">
+      </div>
+      <div class="row" style="margin-top:18px;justify-content:space-between">
+        <span class="muted" id="startMsg"></span>
+        <button class="btn pri" id="startBtn" disabled>Auto-edit →</button>
+      </div>
+    </div>
+    <div class="card hide" id="recentsCard" style="margin-top:16px">
+      <div class="sechead"><h3 style="font-size:14px">Your reels</h3><span class="muted" style="font-size:11px">every edited reel on the server — click to open · hover to play</span></div>
+      <div id="recents"></div>
+    </div>
+  </div>
+
+  <!-- PREP -->
+  <div class="wrap hide" id="prep">
+    <div class="card">
+      <h2 id="prepTitle">Preparing your edit…</h2>
+      <p class="muted" id="prepMsg">starting</p>
+      <div class="bar"><i id="prepBar"></i></div>
+      <div class="stagelist" id="stages"></div>
+      <p class="muted" style="font-size:12px;margin-top:14px">Transcribe → captions → gather b-roll → base edit. This runs on the server and survives you closing the tab; come back anytime.</p>
+    </div>
+  </div>
+
+  <!-- EDITOR -->
+  <div class="wrap hide" id="editor">
+    <div class="editor">
+      <!-- left: player -->
+      <div class="stack">
+        <div class="player"><video id="vid" controls playsinline></video></div>
+        <div class="card" style="padding:12px">
+          <div class="sechead"><h3 style="font-size:13px">Preview</h3><span class="pill" id="dimPill">1080×1920</span></div>
+          <p class="muted" style="font-size:12px">This is the base edit with captions, poster, tint and audio — <b>no b-roll yet</b>. Place b-roll on the timeline, then render the final with your splits.</p>
+        </div>
+      </div>
+      <!-- right: controls -->
+      <div class="stack">
+        <div class="card hide" id="doneBanner" style="border-color:var(--good);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div><b style="color:var(--good)">✓ This reel is rendered.</b> <span class="muted">Change the b-roll below and hit Render to update it.</span></div>
+          <div style="display:flex;gap:8px"><button class="btn sm" id="viewFinalBtn">▶ View final</button><a class="btn sm hide" id="bannerDrive" target="_blank">Drive ↗</a></div>
+        </div>
+        <div class="card">
+          <div class="sechead">
+            <h3>Timeline — b-roll windows</h3>
+            <div><button class="btn sm" id="addWin">+ window at playhead</button></div>
+          </div>
+          <div class="tl">
+            <div class="ruler" id="ruler"></div>
+            <div class="track" id="track">
+              <div class="playhead" id="ph" style="left:0"></div>
+            </div>
+          </div>
+          <p class="muted" style="font-size:11.5px;margin-top:8px">Blue blocks = split-screen (gameplay on top, your face below). Drag to move, drag an edge to resize, click to select. Windows show gameplay only where you place them; everywhere else stays full-frame face.</p>
+        </div>
+
+        <div class="card insp" id="insp">
+          <div class="sechead"><h3>Selected window</h3><button class="btn sm" id="delWin" style="border-color:var(--bad);color:var(--bad)">Delete</button></div>
+          <div id="inspBody"><p class="muted">Select a window on the timeline, or add one.</p></div>
+        </div>
+
+        <div class="card">
+          <div class="sechead"><h3>B-roll library</h3><span class="muted" id="assignHint"></span></div>
+          <div class="lib" id="lib"></div>
+          <div class="drop" id="bdrop" style="margin-top:12px;padding:18px">
+            <b>Upload your own gameplay</b> — drag a clip here (best quality for real gameplay)
+            <input type="file" id="bfile" accept="video/*" class="hide">
+          </div>
+        </div>
+
+        <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div><b>Ready?</b> <span class="muted">renders your splits + captions and pushes to Drive.</span></div>
+          <button class="btn go" id="renderBtn">Render final → Drive</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RENDER/DELIVER -->
+  <div class="wrap hide" id="deliver">
+    <div class="card final" style="text-align:center">
+      <h2 id="delTitle">Rendering final…</h2>
+      <p class="muted" id="delMsg">compositing your b-roll</p>
+      <div class="bar"><i id="delBar"></i></div>
+      <div id="delDone" class="hide">
+        <video id="finalVid" controls playsinline style="width:100%;max-width:380px;border-radius:12px;margin:14px auto;display:block"></video>
+        <div class="row" style="justify-content:center;gap:12px">
+          <a class="btn pri" id="dlBtn" download>Download MP4</a>
+          <a class="btn" id="driveBtn" target="_blank">Open in Drive ↗</a>
+          <button class="btn" id="backBtn">◀ back to timeline</button>
+        </div>
+        <p class="muted" id="driveTxt" style="margin-top:12px"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const api=async(p,m,b,h)=>{const o={method:m||'GET',headers:h||{}};if(b!==undefined){if(b instanceof Blob||b instanceof ArrayBuffer){o.body=b}else{o.headers['content-type']='application/json';o.body=JSON.stringify(b)}}const r=await fetch(p,o);try{return await r.json()}catch{return{ok:false,error:'bad response'}}};
+const toast=(t)=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)};
+const fmt=s=>{s=Math.max(0,s||0);const m=Math.floor(s/60),x=Math.floor(s%60);return m+':'+String(x).padStart(2,'0')};
+let S={id:null,plan:null,lib:[],pl:[],sel:null,dur:0};
+
+function show(which){['start','prep','editor','deliver'].forEach(v=>$('#'+v).classList.toggle('hide',v!==which))}
+
+/* ---------- START ---------- */
+let chosenFile=null;
+$('#drop').onclick=()=>$('#file').click();
+$('#file').onchange=e=>{chosenFile=e.target.files[0];if(chosenFile){$('#dropText').innerHTML='<b>'+chosenFile.name+'</b> selected';checkStart()}};
+['dragover','dragenter'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.add('hot')}));
+['dragleave','drop'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.remove('hot')}));
+$('#drop').addEventListener('drop',e=>{chosenFile=e.dataTransfer.files[0];if(chosenFile){$('#dropText').innerHTML='<b>'+chosenFile.name+'</b> selected';checkStart()}});
+$('#game').oninput=checkStart;
+function checkStart(){$('#startBtn').disabled=!(chosenFile&&$('#game').value.trim())}
+$('#startBtn').onclick=async()=>{
+  $('#startBtn').disabled=true;$('#startMsg').textContent='creating project…';
+  const c=await api('/api/rnf/project','POST',{game:$('#game').value.trim()});
+  if(!c.ok){$('#startMsg').textContent='error: '+c.error;$('#startBtn').disabled=false;return}
+  S.id=c.id;
+  // persist the project id in the URL + localStorage IMMEDIATELY, so closing the tab is safe:
+  // the edit runs on the server regardless, and this page can be reopened to resume it.
+  rememberProject(S.id,$('#game').value.trim());
+  history.replaceState(null,'','?id='+encodeURIComponent(S.id));
+  $('#startMsg').textContent='uploading video…';
+  const buf=await chosenFile.arrayBuffer();
+  const u=await api('/api/rnf/source?id='+S.id,'POST',buf,{'x-filename':chosenFile.name,'content-type':'application/octet-stream'});
+  if(!u.ok){$('#startMsg').textContent='upload failed: '+u.error;$('#startBtn').disabled=false;return}
+  await api('/api/rnf/prepare','POST',{id:S.id});
+  show('prep');pollPrep();
+};
+
+/* recent-projects memory (localStorage) — the safety net if a tab is closed */
+function rememberProject(id,game){try{const k='rnf_projects';const l=JSON.parse(localStorage.getItem(k)||'[]').filter(p=>p.id!==id);l.unshift({id,game:game||'(untitled)',ts:Date.now()});localStorage.setItem(k,JSON.stringify(l.slice(0,20)))}catch{}}
+async function renderRecents(){
+  let projects=[];
+  try{const r=await api('/api/rnf/projects');projects=(r&&r.projects)||[]}catch{}
+  if(!projects.length){$('#recentsCard').classList.add('hide');return}
+  $('#recentsCard').classList.remove('hide');
+  $('#recents').innerHTML='<div class="gallery">'+projects.map(p=>{
+    const src=p.hasFinal?`/rnf-media/${p.id}/final.mp4`:(p.hasPreview?`/rnf-media/${p.id}/preview.mp4`:'');
+    const badge=p.stage==='delivered'?'delivered':p.stage==='ready'?'ready to edit':p.stage==='error'?'failed':(p.stage||'working');
+    const bcol=p.stage==='delivered'?'var(--good)':p.stage==='error'?'var(--bad)':(p.stage==='ready'?'var(--acc)':'var(--acc2)');
+    const vid=src?`<video src="${src}#t=0.6" muted preload="metadata" playsinline onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0.6"></video><div class="play">▶</div>`:'<div class="gph">rendering…</div>';
+    return `<a class="gcard" href="?id=${encodeURIComponent(p.id)}"><div class="gvid">${vid}</div>
+      <div class="gmeta"><b>${p.game}</b><span style="color:${bcol}">${badge} · ${p.hasBroll?'split':'full-frame'}</span></div></a>`;
+  }).join('')+'</div>';
+}
+
+/* ---------- PREP ---------- */
+const PREP_STAGES=[['transcribe','Transcribe'],['plan','Caption plan'],['gather','Gather b-roll'],['captions','Captions'],['base','Base edit'],['preview','Preview'],['ready','Ready']];
+function drawStages(cur){$('#stages').innerHTML=PREP_STAGES.map(([k,l])=>{const ci=PREP_STAGES.findIndex(x=>x[0]===cur);const i=PREP_STAGES.findIndex(x=>x[0]===k);return `<span class="s ${i<ci?'done':i===ci?'on':''}">${l}</span>`}).join('')}
+async function pollPrep(){
+  const r=await api('/api/rnf/status?id='+S.id);const s=r.status||{};
+  $('#prepBar').style.width=(s.pct||0)+'%';$('#prepMsg').textContent=s.msg||s.stage||'working';drawStages(s.stage);
+  if(s.error){$('#prepTitle').textContent='Something failed';$('#prepMsg').innerHTML='<span style="color:var(--bad)">'+s.error+'</span>';return}
+  if(s.ready||s.stage==='ready'){await loadProject();return}
+  setTimeout(pollPrep,2000);
+}
+
+/* ---------- EDITOR ---------- */
+async function loadProject(){
+  const r=await api('/api/rnf/project?id='+S.id);
+  if(!r.ok){toast('load failed: '+r.error);return}
+  S.plan=r.plan;S.lib=r.library||[];S.pl=(r.placements&&r.placements.length?r.placements:(r.plan?r.plan.placements:[]))||[];S.dur=r.plan?r.plan.duration:0;
+  S.deliver=r.deliver||null;S.media=r.media||{};
+  $('#dimPill').textContent='1080×1920';
+  // Always land in the EDITOR (b-roll timeline). If the reel is already rendered, show a
+  // banner offering the final / re-render — but keep b-roll selection front and center.
+  const isDone=(r.status&&r.status.stage==='delivered')||(r.media&&r.media.final);
+  const v=$('#vid');v.src=((r.media&&r.media.preview)||'')+'?t='+Date.now();
+  show('editor');
+  buildRuler();renderTrack();renderLib();renderInsp();bindPlayhead();
+  const b=$('#doneBanner');
+  if(isDone){b.classList.remove('hide');const link=(r.deliver&&r.deliver.driveLink);if(link){$('#bannerDrive').href=link;$('#bannerDrive').classList.remove('hide')}else{$('#bannerDrive').classList.add('hide')}}
+  else b.classList.add('hide');
+}
+function px(t){return (t/S.dur)*$('#track').clientWidth}
+function tAt(x){return Math.max(0,Math.min(S.dur,(x/$('#track').clientWidth)*S.dur))}
+function buildRuler(){
+  const R=$('#ruler');R.innerHTML='';const step=S.dur>30?5:S.dur>12?2:1;
+  for(let t=0;t<=S.dur;t+=step){const d=document.createElement('div');d.className='tick';d.style.left=(t/S.dur*100)+'%';d.textContent=fmt(t);R.appendChild(d)}
+  // caption line ticks
+  (S.plan.captionLines||[]).forEach(l=>{const m=document.createElement('div');m.className='tick';m.style.left=(l.start/S.dur*100)+'%';m.style.top='inherit';});
+}
+function renderTrack(){
+  const T=$('#track');[...T.querySelectorAll('.winblock,.capmark')].forEach(e=>e.remove());
+  // caption markers (subtle)
+  (S.plan.captionLines||[]).forEach(l=>{const m=document.createElement('div');m.className='capmark';m.style.left=(l.start/S.dur*100)+'%';m.style.background='#2a3350';T.appendChild(m)});
+  S.pl.forEach((w,i)=>{
+    const b=document.createElement('div');b.className='winblock'+(S.sel===w.id?' sel':'');b.dataset.id=w.id;
+    b.style.left=(w.start/S.dur*100)+'%';b.style.width=((w.end-w.start)/S.dur*100)+'%';
+    const c=S.lib.find(x=>x.id===w.clip);
+    b.innerHTML='<div class="hnd l"></div><div class="lbl">'+(c?c.name:'(no clip)')+'</div><div class="hnd r"></div>';
+    T.appendChild(b);
+    b.addEventListener('pointerdown',e=>startDrag(e,w,b));
+  });
+}
+function selectWin(id){S.sel=id;renderTrack();renderInsp();const w=S.pl.find(x=>x.id===id);if(w)$('#vid').currentTime=w.start+0.01}
+function renderInsp(){
+  const w=S.pl.find(x=>x.id===S.sel);
+  if(!w){$('#inspBody').innerHTML='<p class="muted">Select a window on the timeline, or add one.</p>';$('#assignHint').textContent='';return}
+  $('#assignHint').textContent='click a clip below → assign to this window';
+  const c=S.lib.find(x=>x.id===w.clip);const wlen=(w.end-w.start);
+  const maxIn=c?Math.max(0,c.duration-wlen):0;
+  $('#inspBody').innerHTML=`
+    <div class="field"><label>Assigned clip</label>
+      <div style="display:flex;gap:10px;align-items:center">
+        ${c?`<img src="/rnf-media/${S.id}/broll/${c.thumb}" style="width:80px;height:46px;object-fit:cover;border-radius:6px">`:'<span class="muted">none — pick from library</span>'}
+        <div><b>${c?c.name:'—'}</b><br><span class="muted" style="font-size:12px">${c?c.duration.toFixed(1)+'s clip':''}</span></div>
+      </div>
+    </div>
+    <div class="field"><label>Window timing — ${fmt(w.start)} to ${fmt(w.end)} (${wlen.toFixed(1)}s)</label>
+      <div class="rangewrap"><button class="btn sm" data-nudge="s-">◀ start</button><button class="btn sm" data-nudge="s+">start ▶</button>
+      <span style="width:10px"></span><button class="btn sm" data-nudge="e-">◀ end</button><button class="btn sm" data-nudge="e+">end ▶</button></div>
+    </div>
+    <div class="field"><label>Clip in-point — start the gameplay at <b id="ciVal">${(w.clipIn||0).toFixed(1)}s</b> ${maxIn>0?'':' (clip shorter than window — loops/holds)'}</label>
+      <input type="range" id="ciRange" min="0" max="${Math.max(0.1,maxIn).toFixed(2)}" step="0.1" value="${Math.min(w.clipIn||0,maxIn).toFixed(2)}">
+    </div>`;
+  $$('#inspBody [data-nudge]').forEach(b=>b.onclick=()=>{const k=b.dataset.nudge;const d=k.includes('+')?0.3:-0.3;if(k[0]==='s')w.start=Math.max(0,Math.min(w.end-0.5,w.start+d));else w.end=Math.max(w.start+0.5,Math.min(S.dur,w.end+d));savePl();renderTrack();renderInsp()});
+  const ci=$('#ciRange');if(ci)ci.oninput=()=>{w.clipIn=+ci.value;$('#ciVal').textContent=(+ci.value).toFixed(1)+'s';savePl()};
+}
+function renderLib(){
+  const L=$('#lib');const w=S.pl.find(x=>x.id===S.sel);
+  L.innerHTML=S.lib.map(c=>`<div class="clip ${w&&w.clip===c.id?'assign':''}" data-id="${c.id}">
+    <img src="/rnf-media/${S.id}/broll/${c.thumb}" onerror="this.style.opacity=.2">
+    <div class="c-meta"><span class="kind ${c.kind}">${c.kind}</span><b>${c.name}</b><span>${(c.duration||0).toFixed(1)}s</span></div></div>`).join('')
+    || '<p class="muted">No b-roll gathered. Upload your gameplay below.</p>';
+  $$('#lib .clip').forEach(el=>el.onclick=()=>{const w=S.pl.find(x=>x.id===S.sel);if(!w){toast('select or add a window first');return}w.clip=el.dataset.id;const c=S.lib.find(x=>x.id===w.clip);const maxIn=Math.max(0,(c.duration||0)-(w.end-w.start));if((w.clipIn||0)>maxIn)w.clipIn=+(maxIn*0.3).toFixed(2);savePl();renderTrack();renderInsp();renderLib();toast('assigned '+c.name)});
+}
+/* drag / resize */
+function startDrag(e,w,el){
+  if(S.sel!==w.id)selectWin(w.id);
+  const edge=e.target.classList.contains('hnd')?(e.target.classList.contains('l')?'l':'r'):'move';
+  const x0=e.clientX,s0=w.start,e0=w.end;el.setPointerCapture(e.pointerId);
+  const mv=ev=>{const dt=tAt(ev.clientX)-tAt(x0);
+    if(edge==='move'){const len=e0-s0;let ns=Math.max(0,Math.min(S.dur-len,s0+dt));w.start=ns;w.end=ns+len}
+    else if(edge==='l'){w.start=Math.max(0,Math.min(w.end-0.5,s0+dt))}
+    else{w.end=Math.max(w.start+0.5,Math.min(S.dur,e0+dt))}
+    el.style.left=(w.start/S.dur*100)+'%';el.style.width=((w.end-w.start)/S.dur*100)+'%'};
+  const up=()=>{el.releasePointerCapture(e.pointerId);document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);w.start=+w.start.toFixed(2);w.end=+w.end.toFixed(2);savePl();renderInsp()};
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);
+}
+$('#addWin').onclick=()=>{const t=$('#vid').currentTime||0;const end=Math.min(S.dur,t+5);const id='w'+Date.now().toString(36);const c=S.lib[0];S.pl.push({id,start:+t.toFixed(2),end:+end.toFixed(2),clip:c?c.id:null,clipIn:0});S.pl.sort((a,b)=>a.start-b.start);S.sel=id;savePl();renderTrack();renderInsp();renderLib()};
+$('#delWin').onclick=()=>{if(!S.sel)return;S.pl=S.pl.filter(w=>w.id!==S.sel);S.sel=null;savePl();renderTrack();renderInsp();renderLib()};
+function bindPlayhead(){const v=$('#vid');v.ontimeupdate=()=>{$('#ph').style.left=(v.currentTime/S.dur*$('#track').clientWidth)+'px'};
+  $('#track').onclick=e=>{if(e.target.closest('.winblock'))return;const rect=$('#track').getBoundingClientRect();v.currentTime=tAt(e.clientX-rect.left)}}
+let saveT;function savePl(){clearTimeout(saveT);saveT=setTimeout(()=>api('/api/rnf/placements','POST',{id:S.id,placements:S.pl}),400)}
+
+/* b-roll upload */
+$('#bdrop').onclick=()=>$('#bfile').click();
+$('#bfile').onchange=e=>uploadBroll(e.target.files[0]);
+['dragover','dragenter'].forEach(ev=>$('#bdrop').addEventListener(ev,e=>{e.preventDefault();$('#bdrop').classList.add('hot')}));
+['dragleave','drop'].forEach(ev=>$('#bdrop').addEventListener(ev,e=>{e.preventDefault();$('#bdrop').classList.remove('hot')}));
+$('#bdrop').addEventListener('drop',e=>{e.preventDefault();uploadBroll(e.dataTransfer.files[0])});
+async function uploadBroll(f){if(!f)return;toast('uploading '+f.name+'…');const buf=await f.arrayBuffer();const r=await api('/api/rnf/broll-upload?id='+S.id,'POST',buf,{'x-filename':f.name,'content-type':'application/octet-stream'});if(!r.ok){toast('upload failed: '+r.error);return}S.lib.push(r.item);renderLib();toast('added '+r.item.name)}
+
+/* render */
+$('#renderBtn').onclick=async()=>{
+  const usable=S.pl.filter(w=>w.clip&&w.end>w.start);
+  if(!usable.length&&!confirm('No b-roll windows set — render as full-frame (no gameplay)?'))return;
+  show('deliver');$('#delDone').classList.add('hide');$('#delTitle').textContent='Rendering final…';$('#delBar').style.width='5%';
+  await api('/api/rnf/render','POST',{id:S.id,placements:S.pl});
+  pollRender();
+};
+async function pollRender(){
+  const r=await api('/api/rnf/status?id='+S.id);const s=r.status||{};
+  $('#delBar').style.width=(s.pct||0)+'%';$('#delMsg').textContent=s.msg||s.stage||'working';
+  if(s.error){$('#delTitle').textContent='Render failed';$('#delMsg').innerHTML='<span style="color:var(--bad)">'+s.error+'</span>';return}
+  if(s.stage==='delivered'||(s.done&&s.phase==='render')){await showDelivered();return}
+  setTimeout(pollRender,2000);
+}
+// fill + show the "Done" screen from the project's final + Drive link (reused on resume)
+async function showDelivered(){
+  const pr=await api('/api/rnf/project?id='+S.id);
+  $('#delBar').style.width='100%';$('#delTitle').textContent='Done ✓';$('#delMsg').textContent='your reel is ready';
+  $('#finalVid').src=((pr.media&&pr.media.final)||'')+'?t='+Date.now();
+  $('#dlBtn').href=(pr.media&&pr.media.final)||'';
+  const link=pr.deliver&&pr.deliver.driveLink;
+  if(link){$('#driveBtn').href=link;$('#driveBtn').classList.remove('hide');$('#driveTxt').innerHTML='Drive: <a class="link" href="'+link+'" target="_blank">'+link+'</a>'}
+  else{$('#driveBtn').classList.add('hide');$('#driveTxt').textContent='(Drive upload unavailable — use Download)'}
+  $('#delDone').classList.remove('hide');show('deliver');
+}
+$('#backBtn').onclick=()=>show('editor');
+$('#viewFinalBtn').onclick=()=>showDelivered();
+
+/* resume an existing project via ?id= (the recovery path after a closed tab) */
+(async()=>{
+  const q=new URLSearchParams(location.search).get('id');
+  if(!q){renderRecents();return}
+  S.id=q;
+  const r=await api('/api/rnf/status?id='+encodeURIComponent(q));const s=(r&&r.status)||{};
+  if(s.stage==='delivered'){await loadProject()} // land in the b-roll EDITOR (banner offers View final / re-render)
+  else if(s.ready||s.stage==='ready'){await loadProject()}
+  else if(s.stage&&s.stage!=='new'&&!s.error){show('prep');pollPrep()}
+  else if(s.error){show('prep');$('#prepTitle').textContent='That reel hit an error';$('#prepMsg').innerHTML='<span style="color:var(--bad)">'+(s.error||'failed')+'</span><br><a class="link" href="./">← start a new reel</a>'}
+  else{ // project unknown/incomplete (e.g. tab closed mid-upload) — fall back to the start screen + recents
+    history.replaceState(null,'','./');renderRecents();
+  }
+})();
+</script>
+</body>
+</html>

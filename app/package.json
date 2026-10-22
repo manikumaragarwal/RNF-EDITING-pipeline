@@ -1,0 +1,117 @@
+{
+  "name": "captions-studio",
+  "productName": "Captions Studio",
+  "version": "0.3.5",
+  "description": "Kalakar-style caption editor — local Whisper timing + optional Gemini polish, HTML/Chromium renderer with ffmpeg overlay (zero-AI render). Hindi/Hinglish/Urdu, kinetic keywords, timeline editing.",
+  "main": "main.cjs",
+  "author": {
+    "name": "SocialSEO team",
+    "email": "team@socialseo.in"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "fetch:ffmpeg": "node scripts/fetch-ffmpeg.mjs",
+    "dist:linux": "npm run fetch:ffmpeg -- --platform=linux --arch=x64 && electron-builder --linux AppImage",
+    "dist:win": "npm run fetch:ffmpeg -- --platform=win --arch=x64 && electron-builder --win nsis",
+    "dist:mac": "npm run fetch:ffmpeg -- --platform=mac --arch=arm64 && electron-builder --mac --arm64",
+    "dist:mac:x64": "npm run fetch:ffmpeg -- --platform=mac --arch=x64 && electron-builder --mac --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "in.socialseo.captionsstudio",
+    "productName": "Captions Studio",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "manikumaragarwal",
+        "repo": "captions-studio-releases"
+      }
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/onnxruntime-node/**",
+      "**/node_modules/sharp/**",
+      "**/node_modules/@img/**",
+      "engine/**",
+      "samples/**"
+    ],
+    "afterPack": "build/afterPack.cjs",
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "renderer/**",
+      "engine/**",
+      "styles/**",
+      "fonts/**",
+      "samples/**",
+      "!**/node_modules/onnxruntime-node/bin/napi-v6/*/*/libonnxruntime_providers_cuda.so",
+      "!**/node_modules/onnxruntime-node/bin/napi-v6/*/*/libonnxruntime_providers_tensorrt.so"
+    ],
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "AudioVideo",
+      "extraResources": [
+        {
+          "from": "vendor/ffmpeg/linux-x64",
+          "to": "bin",
+          "filter": [
+            "ffmpeg",
+            "ffprobe"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "extraResources": [
+        {
+          "from": "vendor/ffmpeg/win-x64",
+          "to": "bin",
+          "filter": [
+            "ffmpeg.exe",
+            "ffprobe.exe"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.video",
+      "identity": null,
+      "extraResources": [
+        {
+          "from": "vendor/ffmpeg/mac-${arch}",
+          "to": "bin",
+          "filter": [
+            "ffmpeg",
+            "ffprobe"
+          ]
+        }
+      ]
+    },
+    "dmg": {
+      "writeUpdateInfo": false
+    }
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "@indic-transliteration/sanscript": "^1.3.3",
+    "electron-updater": "^6.8.9"
+  }
+}

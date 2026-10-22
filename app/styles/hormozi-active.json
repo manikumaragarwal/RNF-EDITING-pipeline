@@ -1,0 +1,22 @@
+{
+  "id": "hormozi-active",
+  "label": "Hormozi (word-pop)",
+  "font": "Anton",
+  "size": 104,
+  "weight": 700,
+  "case": "upper",
+  "primary": "#FFFFFF",
+  "accent": "#12E0C8",
+  "highlightMode": "active",
+  "entrance": "pop",
+  "entranceMs": 180,
+  "activeScale": 1.14,
+  "activePopMs": 120,
+  "outline": { "color": "#000000", "width": 7 },
+  "shadow": 3,
+  "box": { "enabled": false },
+  "position": { "x": 50, "y": 72 },
+  "maxWidth": 90,
+  "segmentation": { "mode": "words", "max": 3 },
+  "tail": 0.07
+}

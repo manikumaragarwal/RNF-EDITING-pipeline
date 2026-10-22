@@ -1,0 +1,22 @@
+{
+  "id": "typewriter",
+  "label": "Typewriter",
+  "font": "SF Pro Display",
+  "size": 74,
+  "weight": 700,
+  "case": null,
+  "letterSpacing": 0,
+  "primary": "#FFFFFF",
+  "accent": "#FFE01B",
+  "highlightMode": "none",
+  "animScope": "word",
+  "entrance": "none",
+  "typewriter": true,
+  "outline": { "color": "#000000", "width": 4 },
+  "shadow": 2,
+  "box": { "enabled": false },
+  "position": { "x": 50, "y": 82 },
+  "maxWidth": 86,
+  "segmentation": { "mode": "words", "max": 5 },
+  "tail": 0.05
+}

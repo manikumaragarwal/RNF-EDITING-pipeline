@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family:'Anton';            src:url('../fonts/Anton-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Baloo 2';          src:url('../fonts/Baloo2-ExtraBold.ttf') format('truetype'); font-weight:800; font-display:swap; }
+  @font-face { font-family:'Inter';            src:url('../fonts/Inter-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Bebas Neue';       src:url('../fonts/BebasNeue-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Archivo Black';    src:url('../fonts/ArchivoBlack-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Poppins ExtraBold';src:url('../fonts/Poppins-ExtraBold.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Poppins SemiBold'; src:url('../fonts/Poppins-SemiBold.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Oswald';               src:url('../fonts/Oswald-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Teko';                 src:url('../fonts/Teko-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Big Shoulders Display';src:url('../fonts/BigShouldersDisplay-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Barlow Condensed';     src:url('../fonts/BarlowCondensed-Bold.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Roboto Condensed';     src:url('../fonts/RobotoCondensed-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Poppins';              src:url('../fonts/Poppins-Bold.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Montserrat';           src:url('../fonts/Montserrat-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Outfit';               src:url('../fonts/Outfit-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Plus Jakarta Sans';    src:url('../fonts/PlusJakartaSans-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Space Grotesk';        src:url('../fonts/SpaceGrotesk-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Sora';                 src:url('../fonts/Sora-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Bricolage Grotesque';  src:url('../fonts/BricolageGrotesque-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Unbounded';            src:url('../fonts/Unbounded-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Archivo';              src:url('../fonts/Archivo-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Hanken Grotesk';       src:url('../fonts/HankenGrotesk-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Fredoka';              src:url('../fonts/Fredoka-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Lilita One';           src:url('../fonts/LilitaOne-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Nunito';               src:url('../fonts/Nunito-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Paytone One';          src:url('../fonts/PaytoneOne-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Playfair Italic';      src:url('../fonts/PlayfairDisplay-Italic-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'DM Serif Display';     src:url('../fonts/DMSerifDisplay-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Fraunces';             src:url('../fonts/Fraunces-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Instrument Serif';     src:url('../fonts/InstrumentSerif-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Bodoni Moda';          src:url('../fonts/BodoniModa-VF.ttf') format('truetype'); font-display:swap; }
+  /* Script / calligraphic set (flowing italic — reference "Waller" style). Google Fonts OFL/Apache. */
+  @font-face { font-family:'Allura';               src:url('../fonts/Allura-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Alex Brush';           src:url('../fonts/AlexBrush-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Pinyon Script';        src:url('../fonts/PinyonScript-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Parisienne';           src:url('../fonts/Parisienne-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Sacramento';           src:url('../fonts/Sacramento-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Great Vibes';          src:url('../fonts/GreatVibes-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Satisfy';              src:url('../fonts/Satisfy-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Kaushan Script';       src:url('../fonts/KaushanScript-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Dancing Script';       src:url('../fonts/DancingScript-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Caveat';               src:url('../fonts/Caveat-VF.ttf') format('truetype'); font-display:swap; }
+  /* Brand font (Leo's Pride): real TacticSans-Bld first, Baloo 2 ExtraBold fallback (drop the licensed
+     fonts/TacticSans-Bld.otf in to auto-upgrade). */
+  @font-face { font-family:'Tactic Sans';          src:url('../fonts/TacticSans-Bld.otf') format('opentype'), url('../fonts/Baloo2-ExtraBold.ttf') format('truetype'); font-weight:800; font-display:swap; }
+  @font-face { font-family:'Luckiest Guy';         src:url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Coolvetica';           src:url('../fonts/Coolvetica.otf') format('opentype'); font-display:swap; }
+  @font-face { font-family:'Helvetica';            src:url('../fonts/Arimo-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'SF Pro Display';       src:url('../fonts/SFPro.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Thunderbolt';          src:url('../fonts/Thunderbolt.ttf') format('truetype'); font-display:swap; }
+  /* Transparent so capturePage() yields an alpha PNG we can overlay in ffmpeg.
+     The video is NEVER loaded here — it's composited natively by ffmpeg, which is
+     why export is fast (no per-frame decoder seek). */
+  html,body{margin:0;padding:0;background:transparent;overflow:hidden}
+  #stage{position:relative;overflow:hidden;background:transparent}
+</style>
+</head>
+<body>
+  <div id="stage"></div>
+  <script type="module">
+    import { buildScenes, renderCaption, renderKinetic } from '../engine/caption-dom.mjs';
+    const stage = document.getElementById('stage');
+    let scenes = [], style = {}, project = {};
+
+    // Inject user-uploaded @font-face rules (passed in from the render worker) and wait for them to
+    // load BEFORE building scenes, so a custom font never falls back to a default in the render.
+    async function injectCustomFonts(list) {
+      if (!Array.isArray(list) || !list.length) return;
+      const css = list.map((f) => `@font-face{font-family:'${String(f.family).replace(/'/g,'')}';src:url('${f.url}') format('${f.format||'truetype'}');font-display:block;}`).join('\n');
+      const el = document.createElement('style'); el.id = 'customFontFaces'; el.textContent = css; document.head.appendChild(el);
+      try { await Promise.all(list.map((f) => document.fonts.load(`32px '${String(f.family).replace(/'/g,'')}'`).catch(() => {}))); } catch {}
+    }
+
+    window.__setup = async (data) => {
+      project = data.project; style = data.style;
+      stage.style.width = project.__w + 'px';
+      stage.style.height = project.__h + 'px';
+      await injectCustomFonts(data.customFonts);
+      scenes = buildScenes(project);
+      return true;
+    };
+
+    // Paint the caption layer for time t. No video, no seeking — just the pure
+    // function of t. Resolve after two frames so the paint has landed on screen.
+    window.__seek = (t) => new Promise((resolve) => {
+      renderCaption(stage, scenes, style, t, project);
+      renderKinetic(stage, project, style, t);
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve(true)));
+    });
+
+    // fonts must be ready before first paint (avoids fallback-font frames). document.fonts.ready
+    // alone resolves before any caption font is requested (nothing painted yet), so FORCE-load
+    // every declared @font-face first, then await ready. One-time cost, guarantees the right glyphs.
+    window.__fontsReady = async () => {
+      try { await Promise.all([...document.fonts].map((f) => f.load().catch(() => {}))); } catch {}
+      try { await document.fonts.ready; } catch {}
+      return true;
+    };
+  </script>
+</body>
+</html>

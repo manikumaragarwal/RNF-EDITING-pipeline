@@ -1,0 +1,22 @@
+{
+  "id": "word-pop",
+  "label": "Word Pop",
+  "font": "Inter",
+  "size": 80,
+  "weight": 900,
+  "case": "upper",
+  "letterSpacing": -1,
+  "primary": "#FFFFFF",
+  "accent": "#FFE01B",
+  "highlightMode": "none",
+  "animScope": "word",
+  "entrance": "pop",
+  "entranceMs": 110,
+  "outline": { "color": "#000000", "width": 6 },
+  "shadow": 2,
+  "box": { "enabled": false },
+  "position": { "x": 50, "y": 82 },
+  "maxWidth": 88,
+  "segmentation": { "mode": "words", "max": 3 },
+  "tail": 0.05
+}

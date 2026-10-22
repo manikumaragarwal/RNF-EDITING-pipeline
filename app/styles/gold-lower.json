@@ -1,0 +1,38 @@
+{
+  "id": "gold-lower",
+  "label": "Gold Lower",
+  "font": "Archivo Black",
+  "size": 50,
+  "weight": 900,
+  "case": "upper",
+  "primary": "#FFE7A3",
+  "accent": "#FFD24A",
+  "highlightMode": "active",
+  "entrance": "rise",
+  "animScope": "line",
+  "entranceMs": 180,
+  "activeScale": 1.02,
+  "outline": {
+    "color": "#000000",
+    "width": 0
+  },
+  "shadow": 3,
+  "box": {
+    "enabled": true,
+    "color": "#1A1206",
+    "opacity": 0.72,
+    "radius": 10,
+    "padX": 22,
+    "padY": 12
+  },
+  "position": {
+    "x": 50,
+    "y": 88
+  },
+  "maxWidth": 84,
+  "segmentation": {
+    "mode": "chars",
+    "max": 30
+  },
+  "tail": 0.06
+}

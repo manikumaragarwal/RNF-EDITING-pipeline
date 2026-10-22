@@ -1,0 +1,38 @@
+{
+  "id": "red-alert",
+  "label": "Red Alert",
+  "font": "Poppins ExtraBold",
+  "size": 62,
+  "weight": 800,
+  "case": "upper",
+  "primary": "#FFFFFF",
+  "accent": "#FFFFFF",
+  "highlightMode": "active",
+  "entrance": "pop",
+  "animScope": "line",
+  "entranceMs": 150,
+  "activeScale": 1.04,
+  "outline": {
+    "color": "#000000",
+    "width": 0
+  },
+  "shadow": 2,
+  "box": {
+    "enabled": true,
+    "color": "#E11D2A",
+    "opacity": 0.96,
+    "radius": 8,
+    "padX": 22,
+    "padY": 12
+  },
+  "position": {
+    "x": 50,
+    "y": 28
+  },
+  "maxWidth": 80,
+  "segmentation": {
+    "mode": "chars",
+    "max": 22
+  },
+  "tail": 0.06
+}

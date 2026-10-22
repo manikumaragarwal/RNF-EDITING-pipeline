@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' file:; media-src file: blob:; img-src 'self' file: data: blob:; font-src 'self' file:;" />
+<title>Captions Studio</title>
+<style>
+  /* @font-face names MUST match the fonts' internal family names (what the renderer uses),
+     so the browser preview equals the burned output. */
+  @font-face { font-family:'Anton';            src:url('../fonts/Anton-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Baloo 2';          src:url('../fonts/Baloo2-ExtraBold.ttf') format('truetype'); font-weight:800; font-display:swap; }
+  @font-face { font-family:'Inter';            src:url('../fonts/Inter-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Bebas Neue';       src:url('../fonts/BebasNeue-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Archivo Black';    src:url('../fonts/ArchivoBlack-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Poppins ExtraBold';src:url('../fonts/Poppins-ExtraBold.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Poppins SemiBold'; src:url('../fonts/Poppins-SemiBold.ttf') format('truetype'); font-display:swap; }
+  /* Expanded caption-font collection (Google Fonts, OFL). Variable fonts render at the weight the style sets. */
+  @font-face { font-family:'Oswald';               src:url('../fonts/Oswald-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Teko';                 src:url('../fonts/Teko-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Big Shoulders Display';src:url('../fonts/BigShouldersDisplay-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Barlow Condensed';     src:url('../fonts/BarlowCondensed-Bold.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Roboto Condensed';     src:url('../fonts/RobotoCondensed-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Poppins';              src:url('../fonts/Poppins-Bold.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Montserrat';           src:url('../fonts/Montserrat-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Outfit';               src:url('../fonts/Outfit-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Plus Jakarta Sans';    src:url('../fonts/PlusJakartaSans-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Space Grotesk';        src:url('../fonts/SpaceGrotesk-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Sora';                 src:url('../fonts/Sora-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Bricolage Grotesque';  src:url('../fonts/BricolageGrotesque-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Unbounded';            src:url('../fonts/Unbounded-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Archivo';              src:url('../fonts/Archivo-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Hanken Grotesk';       src:url('../fonts/HankenGrotesk-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Fredoka';              src:url('../fonts/Fredoka-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Lilita One';           src:url('../fonts/LilitaOne-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Nunito';               src:url('../fonts/Nunito-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Paytone One';          src:url('../fonts/PaytoneOne-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Playfair Italic';      src:url('../fonts/PlayfairDisplay-Italic-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'DM Serif Display';     src:url('../fonts/DMSerifDisplay-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Fraunces';             src:url('../fonts/Fraunces-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Instrument Serif';     src:url('../fonts/InstrumentSerif-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Bodoni Moda';          src:url('../fonts/BodoniModa-VF.ttf') format('truetype'); font-display:swap; }
+  /* Script / calligraphic set (flowing italic — reference "Waller" style). Google Fonts OFL/Apache. */
+  @font-face { font-family:'Allura';               src:url('../fonts/Allura-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Alex Brush';           src:url('../fonts/AlexBrush-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Pinyon Script';        src:url('../fonts/PinyonScript-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Parisienne';           src:url('../fonts/Parisienne-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Sacramento';           src:url('../fonts/Sacramento-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Great Vibes';          src:url('../fonts/GreatVibes-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Satisfy';              src:url('../fonts/Satisfy-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Kaushan Script';       src:url('../fonts/KaushanScript-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Dancing Script';       src:url('../fonts/DancingScript-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Caveat';               src:url('../fonts/Caveat-VF.ttf') format('truetype'); font-display:swap; }
+  /* Brand font (Leo's Pride): real TacticSans-Bld first, Baloo 2 ExtraBold as a kid-friendly fallback
+     until the licensed file is dropped in as fonts/TacticSans-Bld.otf (same name → auto-upgrade). */
+  @font-face { font-family:'Tactic Sans';          src:url('../fonts/TacticSans-Bld.otf') format('opentype'), url('../fonts/Baloo2-ExtraBold.ttf') format('truetype'); font-weight:800; font-display:swap; }
+  @font-face { font-family:'Luckiest Guy';         src:url('../fonts/LuckiestGuy-Regular.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Coolvetica';           src:url('../fonts/Coolvetica.otf') format('opentype'); font-display:swap; }
+  @font-face { font-family:'Helvetica';            src:url('../fonts/Arimo-VF.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'SF Pro Display';       src:url('../fonts/SFPro.ttf') format('truetype'); font-display:swap; }
+  @font-face { font-family:'Thunderbolt';          src:url('../fonts/Thunderbolt.ttf') format('truetype'); font-display:swap; }
+  /* ---- Kalakar-class dark theme (brand green #49A781) ---- */
+  :root{
+    --bg:#0a0a0c;        /* zinc-950 near-black canvas */
+    --panel:#111214;     /* side panels, one step up from canvas */
+    --panel2:#17181b;    /* cards / raised rows */
+    --line:#26262a;      /* hairline borders */
+    --ink:#f4f4f5;       /* primary text */
+    --dim:#8a8a93;       /* muted labels */
+    --accent:#49a781;    /* THE brand green — tabs, toggles, primary, active */
+    --accent-ink:#06241a;/* dark text on a green fill */
+    --accent2:#49a781;   /* unify everything on the one green */
+    --warn:#f59e0b;      /* true warnings only */
+    --rail:#0c0c0e;      /* far-left icon rail (darker than canvas) */
+    --radius:10px
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  /* Shell = [far-left icon rail][everything else], top app bar + bottom timeline span full width.
+     .editor stays its OWN 3-col grid inside the main cell, so the resize logic is untouched. */
+  body{background:var(--bg);color:var(--ink);font:14px/1.45 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden;
+       display:grid;grid-template-rows:52px 1fr 214px;grid-template-columns:62px minmax(0,1fr);height:100vh;width:100vw}
+  .hdr{grid-column:1/-1;grid-row:1}
+  .rail{grid-column:1;grid-row:2}
+  .editor{grid-column:2;grid-row:2}
+  .timeline{grid-column:1/-1;grid-row:3}
+  /* far-left Kalakar icon rail */
+  .rail{background:var(--rail);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:stretch;padding:9px 0;gap:2px;min-height:0}
+  .railItem{display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 2px;color:var(--dim);cursor:pointer;border:none;background:transparent;border-radius:0;position:relative;font:inherit}
+  .railItem:hover{color:var(--ink);background:rgba(255,255,255,.035)}
+  .railItem.on{color:var(--accent)}
+  .railItem.on::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+  .railItem .ic{font-size:19px;line-height:1;font-weight:600}
+  .railItem .lb{font-size:9.5px;letter-spacing:.02em}
+  .railItem.disabled{opacity:.38;cursor:default}
+  .railItem.disabled:hover{color:var(--dim);background:transparent}
+  button{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+  button:hover{border-color:#3b4757}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.go{background:var(--accent2);border-color:var(--accent2);color:#04210f}
+  button.ai{background:#3a2f5e;border-color:#5b4aa0}
+  button.ghost{background:transparent}
+  button:disabled{opacity:.5;cursor:default}
+  select,input[type=text],input[type=password],input[type=number]{font:inherit;color:var(--ink);background:#1c1c1f;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:#1c1c1f;cursor:pointer}
+  input[type=range]{width:100%}
+  label.f{display:flex;align-items:center;gap:8px;color:var(--dim);font-size:12px}
+  .hdr{display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .hdr .logo{font-weight:700;letter-spacing:.3px}
+  .hdr .logo b{color:var(--accent)}
+  .hdr .sp{flex:1}
+  .status{font-size:12px;color:var(--dim);min-width:120px;text-align:right}
+  .progress-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(8,10,16,.60);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+  .progress-card{background:linear-gradient(180deg,#17181b,#111214);border:1px solid rgba(73,167,129,.24);border-radius:18px;padding:36px 48px;min-width:340px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+  .progress-spinner{width:42px;height:42px;margin:0 auto 20px;border-radius:50%;border:3px solid rgba(73,167,129,.18);border-top-color:var(--accent);animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .progress-title{font-size:17px;font-weight:600;color:#eef2fb;letter-spacing:.2px}
+  .progress-sub{font-size:12.5px;color:var(--dim);margin-top:7px}
+
+  .editor{display:grid;grid-template-columns:300px minmax(0,1fr) 360px;min-height:0}
+  .caps{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--panel);position:relative}
+  /* min-width:0 is REQUIRED: a grid 1fr track defaults to min-width:auto, so the
+     replaced <video> element's intrinsic width blows the center column past the
+     viewport and pushes the inspector off-screen. Keep both this and minmax(0,1fr). */
+  .stagewrap{display:flex;flex-direction:column;min-height:0;min-width:0;background:#0a0d12}
+  .inspector{border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:var(--panel);position:relative}
+  .inspector.isCollapsed{display:none !important}
+  .paneResizer{position:absolute;top:0;bottom:0;width:7px;cursor:col-resize;z-index:30}
+  .paneResizer:hover{background:color-mix(in srgb, var(--accent) 35%, transparent)}
+  .inspCollapse{margin-left:auto;padding:2px 8px}
+  .inspReopen{position:fixed;right:0;top:120px;z-index:40;display:none;border-radius:8px 0 0 8px;padding:12px 7px;background:var(--panel2);border:1px solid var(--line);border-right:0;cursor:pointer}
+  .panelHead{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);font-weight:600}
+  .panelHead .sp{flex:1}
+  .panelHead button{padding:4px 9px;font-size:12px}
+
+  .stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0;position:relative;padding:14px}
+  .vwrap{position:relative;display:inline-block;max-height:100%;max-width:100%}
+  video{display:block;max-height:62vh;max-width:100%;border-radius:6px}
+  /* timeline height modes let the video reclaim the freed space */
+  body.tl-min video{max-height:82vh}
+  body.tl-tall video{max-height:42vh}
+  /* Unlock (P4): glowing preview border + interactive caption layer */
+  body.unlocked .vwrap{box-shadow:0 0 0 2px rgba(122,162,247,.9),0 0 26px rgba(122,162,247,.5);border-radius:8px;animation:capglow 2s ease-in-out infinite}
+  @keyframes capglow{0%,100%{box-shadow:0 0 0 2px rgba(122,162,247,.7),0 0 16px rgba(122,162,247,.35)}50%{box-shadow:0 0 0 2px rgba(167,139,250,.95),0 0 30px rgba(167,139,250,.6)}}
+  body.unlocked .cap-layer{pointer-events:auto !important}
+  body.unlocked .cap-layer [data-wid],body.unlocked .cap-layer [data-linekey]{cursor:move}
+  .cap-sel-line{outline:2px dashed rgba(122,162,247,.95);outline-offset:6px;border-radius:8px}
+  .cap-sel-word{outline:2px solid var(--accent2);outline-offset:3px;border-radius:5px}
+  .cap-handle{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+    background:var(--accent2);border:2px solid #04210f;box-shadow:0 2px 7px rgba(0,0,0,.55);
+    cursor:nwse-resize;z-index:11;touch-action:none}
+  /* original-position ghost (F3) + finder (F8) */
+  .cap-ghost{position:absolute;border:2px dashed rgba(230,237,243,.6);border-radius:8px;z-index:9;pointer-events:none;background:rgba(230,237,243,.04)}
+  .cap-ghost-label{position:absolute;left:50%;bottom:-23px;transform:translateX(-50%);white-space:nowrap;font-size:11px;color:#e6edf3;background:rgba(8,10,16,.72);padding:2px 8px;border-radius:6px}
+  .cap-ghost-arrow{position:absolute;left:50%;top:-30px;transform:translateX(-50%);color:#fff;font-size:15px;font-weight:800;letter-spacing:-2px;text-shadow:0 1px 4px rgba(0,0,0,.7)}
+  .cap-finder{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;
+    background:rgba(20,26,38,.9);border:1px solid rgba(130,170,235,.4);color:#cdd8ea;font-size:16px;
+    cursor:pointer;z-index:12;opacity:.5;transition:opacity .15s,border-color .15s,color .15s;line-height:1}
+  .cap-finder:hover,.cap-finder.on{opacity:1;border-color:var(--accent2);color:#fff}
+  /* floating context toolbar (F4) */
+  .cap-toolbar{position:absolute;z-index:13;background:linear-gradient(180deg,#1c2432,#141a24);border:1px solid rgba(130,170,235,.3);border-radius:12px;box-shadow:0 14px 36px rgba(0,0,0,.6);padding:6px;min-width:214px;user-select:none}
+  .cap-toolbar .ct-row{display:flex;align-items:center;gap:4px}
+  .cap-toolbar .ct-tabs{border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:6px;margin-bottom:6px}
+  .cap-toolbar .ct-tab{background:transparent;border:none;color:var(--dim);font-size:12px;padding:4px 10px;border-radius:7px;cursor:pointer}
+  .cap-toolbar .ct-tab.on{background:var(--accent2);color:#04210f;font-weight:700}
+  .cap-toolbar .ct-grow{flex:1}
+  .cap-toolbar .ct-x{background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:6px}
+  .cap-toolbar .ct-x:hover{color:#fff;background:rgba(255,255,255,.09)}
+  .cap-toolbar .ct-icons{gap:3px;flex-wrap:wrap}
+  .cap-toolbar .ct-icon{width:36px;height:34px;background:#1c1c1f;border:1px solid var(--line);border-radius:8px;color:var(--ink);cursor:pointer;font-size:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;gap:1px}
+  .cap-toolbar .ct-icon small{font-size:8px;color:var(--dim)}
+  .cap-toolbar .ct-icon.on{border-color:var(--accent2);color:var(--accent2)}
+  .cap-toolbar .ct-pop{margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08)}
+  .cap-toolbar .ct-ctl{display:flex;align-items:center;gap:8px}
+  .cap-toolbar .ct-ctl input[type=range]{width:128px}
+  .cap-toolbar .ct-ctl span{font-size:11px;color:var(--dim);min-width:36px}
+  .cap-toolbar .ct-seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .cap-toolbar .ct-seg button{background:transparent;border:none;color:var(--ink);padding:5px 11px;cursor:pointer}
+  .cap-toolbar .ct-seg button:hover{background:rgba(255,255,255,.07)}
+  .cap-toolbar .ct-btn{background:#1c1c1f;border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:6px 10px;cursor:pointer;font-size:12px;width:100%}
+  .cap-toolbar .ct-btn:hover{border-color:#3b4757}
+  .cap-toolbar .ct-mini{width:auto;padding:3px 8px;font-size:11px}
+  .cap-toolbar .ct-size input[type=number]{width:64px;background:#1c1c1f;color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:5px 6px;font:inherit;text-align:center}
+  .cap-toolbar .ct-size .ct-mini{padding:4px 10px;font-size:15px;line-height:1}
+  .cap-toolbar .ct-emph{display:flex;gap:14px;flex-wrap:wrap}
+  .cap-toolbar .ct-tog{display:flex;align-items:center;gap:5px;color:var(--dim);font-size:12px;cursor:pointer}
+  #btnUnlock.on,#btnUnlock2.on{background:var(--accent2);border-color:var(--accent2);color:#04210f}
+  .layout-sel{font-weight:600;color:var(--ink)}
+  .layout-none{color:var(--dim);font-size:12px;padding:6px 0}
+  .pbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--line)}
+  .pbar .t{font-variant-numeric:tabular-nums;color:var(--dim);font-size:12px;min-width:118px}
+
+  /* captions list */
+  .words{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px;min-height:0}
+  .scene{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:9px}
+  .scene.off{opacity:.4}
+  .scene.playing{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent);background:color-mix(in srgb, var(--accent) 8%, var(--panel2))}
+  .findBar{display:flex;gap:6px;align-items:center;padding:8px;margin-bottom:8px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);flex-wrap:wrap}
+  .findBar input[type=text]{flex:1;min-width:90px}
+  .findBar .findCase{display:flex;align-items:center;gap:3px;color:var(--dim);font-size:12px;cursor:pointer;user-select:none}
+  .findBar .findCount{color:var(--dim);font-size:11px;min-width:54px;text-align:center;font-variant-numeric:tabular-nums}
+  .findBar button{padding:5px 9px}
+  .chip.found{outline:2px solid color-mix(in srgb, var(--accent) 60%, transparent);outline-offset:1px}
+  .chip.foundcur{outline:2px solid var(--accent);background:color-mix(in srgb, var(--accent) 22%, var(--panel2))}
+  input.scrub:not(:focus){cursor:ew-resize}
+  .ctxMenu{position:fixed;z-index:9999;min-width:198px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px;box-shadow:0 12px 34px rgba(0,0,0,.5);font-size:13px}
+  .ctxItem{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:7px 10px;border-radius:7px;cursor:pointer;color:var(--ink)}
+  .ctxItem:hover{background:color-mix(in srgb, var(--accent) 16%, transparent)}
+  .ctxItem.danger{color:#ff6b6b}
+  .ctxItem .ctxSub{color:var(--dim);font-size:11px}
+  .ctxSep{height:1px;background:var(--line);margin:4px 6px}
+  .tlSelBox{position:absolute;top:0;height:100%;background:color-mix(in srgb, var(--accent) 14%, transparent);border:1px solid var(--accent);border-radius:4px;pointer-events:none;z-index:5}
+  .tpl-save{margin-bottom:8px}
+  .tpl-save button{width:100%}
+  .tpl{position:relative}
+  .tplDel{position:absolute;top:-6px;right:-6px;width:18px;height:18px;line-height:16px;text-align:center;border-radius:50%;background:#ff6b6b;color:#fff;font-size:13px;cursor:pointer;display:none}
+  .tpl:hover .tplDel{display:block}
+  .scene.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  .scene.dragover{border-color:var(--accent2);box-shadow:0 0 0 2px var(--accent2) inset}
+  .scene .sh{display:flex;align-items:center;gap:8px;margin-bottom:7px;color:var(--dim);font-size:11px;font-variant-numeric:tabular-nums}
+  .scene .sh .grow{flex:1}
+  .scene .sh .addline{cursor:pointer;color:var(--accent);font-size:11px;opacity:.7;font-variant-numeric:normal}
+  .scene .sh .addline:hover{opacity:1}
+  .scene.emptyline{border-style:dashed;border-color:rgba(73,167,129,.5);background:rgba(73,167,129,.06);color:var(--dim);font-size:12px;text-align:center;padding:11px 10px;cursor:default}
+  .scene.emptyline.dragover{border-color:var(--accent2);background:rgba(34,197,94,.10);color:var(--ink)}
+  .scene.emptyline .rm{float:right;cursor:pointer;color:var(--dim);font-size:14px;line-height:1}
+  .scene.emptyline .rm:hover{color:#ff6b6b}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{display:inline-flex;align-items:center;gap:4px;background:#1c1c1f;border:1px solid var(--line);border-radius:7px;padding:3px 6px 3px 8px;cursor:grab}
+  .chip.hi{background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:var(--accent);color:var(--ink)}
+  .chip.off{opacity:.4}
+  .chip.dragging{opacity:.5}
+  .chip [contenteditable]{outline:none;min-width:6px}
+  .chip .x{cursor:pointer;color:var(--dim);font-size:14px;line-height:1;padding:0 2px}
+  .chip .x:hover{color:#ff6b6b}
+  .chip .ed{cursor:pointer;color:var(--dim);font-size:11px;line-height:1;padding:0 1px;opacity:.6}
+  .chip .ed:hover{color:var(--accent2);opacity:1}
+  .upd{background:#1f6feb;border-color:#1f6feb;color:#fff;font-weight:600;cursor:pointer;animation:updpulse 2.2s ease-in-out infinite}
+  @keyframes updpulse{0%,100%{opacity:1}50%{opacity:.68}}
+  .chip .add{cursor:pointer;color:var(--accent2)}
+
+  /* inspector tabs — 7 tabs don't fit 360px, so the row scrolls (hidden scrollbar) and labels stay whole */
+  .tabs{display:flex;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:0 0 auto;border:none;border-radius:0;background:transparent;padding:12px 11px;color:var(--dim);border-bottom:2px solid transparent;white-space:nowrap;font-size:13px}
+  .tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+  .tabpanels{flex:1;overflow:auto;min-height:0}
+  .tabpanel{display:none;padding:14px;flex-direction:column;gap:14px}
+  .tabpanel.on{display:flex}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .row.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ctl{display:flex;flex-direction:column;gap:5px}
+  .ctl > span{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+  .ctl .rowflex{display:flex;align-items:center;gap:8px}
+  h3{margin:0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  .divider{height:1px;background:var(--line);margin:2px 0}
+  .seg-val{color:var(--ink);font-weight:600}
+  .rules{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .rules label{display:flex;gap:5px;align-items:center;color:var(--dim);font-size:12px}
+  .hint{color:var(--dim);font-size:12px}
+
+  /* Kalakar-style collapsible sections (scoped to the Style tab so other tabs are untouched) */
+  #tabText{padding:0;gap:0}
+  details.sec{border-bottom:1px solid var(--line)}
+  details.sec > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;
+    padding:13px 14px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);user-select:none}
+  details.sec > summary::-webkit-details-marker{display:none}
+  details.sec > summary::after{content:"⌄";margin-left:auto;font-size:14px;line-height:1;color:var(--dim);transition:transform .15s ease}
+  details.sec[open] > summary::after{transform:rotate(180deg)}
+  details.sec > summary:hover{color:var(--ink)}
+  details.sec[open] > summary{color:var(--ink)}
+  .secbody{display:flex;flex-direction:column;gap:12px;padding:2px 14px 16px}
+
+  /* templates */
+  .tpls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tpl{border:1px solid var(--line);border-radius:var(--radius);padding:10px;cursor:pointer;background:var(--panel2);display:flex;flex-direction:column;gap:8px;align-items:center}
+  .tpl:hover{border-color:#3b4757}
+  .tpl.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  .tpl .prev{width:100%;height:56px;border-radius:6px;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .tpl .prev span{font-size:15px;font-weight:800;white-space:nowrap}
+  .tpl .nm{font-size:12px;color:var(--dim)}
+  .tpl-scope{grid-column:1/-1;font-size:11px;letter-spacing:.03em;color:var(--dim);
+    background:var(--panel2);border:1px dashed var(--line);border-radius:8px;padding:7px 10px;text-align:center}
+
+  /* transitions */
+  .angrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .an{border:1px solid var(--line);border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;background:var(--panel2);font-size:12px;color:var(--dim)}
+  .an.on{border-color:var(--accent);color:var(--ink)}
+  .seg-toggle{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg-toggle button{border:none;border-radius:0;background:transparent;padding:7px 16px;color:var(--dim)}
+  .seg-toggle button.on{background:var(--accent);color:#fff}
+
+  /* timeline */
+  .timeline{border-top:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+  .tlbar{display:flex;align-items:center;gap:10px;padding:6px 12px;border-bottom:1px solid var(--line);font-size:12px;color:var(--dim)}
+  .tlbar .sp{flex:1}
+  .tlbar button{padding:3px 9px;font-size:13px}
+  .tlbar button:disabled{opacity:.35;cursor:default}
+  /* compact word/sentence toggle in the timeline bar */
+  .tlViewToggle{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .tlViewToggle button{border:none;border-radius:0;background:transparent;padding:3px 10px;font-size:12px;color:var(--dim)}
+  .tlViewToggle button.on{background:var(--accent);color:#fff}
+  .tlscroll{flex:1;overflow-x:auto;overflow-y:hidden;position:relative;min-height:0}
+  .tlinner{position:relative;height:100%}
+  #tlWave{position:absolute;left:0;top:0;height:100%;display:block}
+  .tlword{position:absolute;top:8px;height:26px;line-height:26px;background:#1c1c1f;border:1px solid var(--line);border-radius:6px;
+          font-size:12px;color:var(--ink);padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:grab;user-select:none;touch-action:none}
+  .tlword.hi{background:color-mix(in srgb,var(--accent) 20%,#111214);border-color:var(--accent)}
+  .tlword.active{border-color:var(--accent);color:#fff}
+  .tlword.sel{outline:2px solid var(--accent2);outline-offset:-1px;z-index:4}
+  /* full-sentence chunk (Sentences view) — one block per caption line, click to select the whole line */
+  .tlword.tlscene{cursor:pointer;background:color-mix(in srgb,var(--accent) 10%,#17181b);border-color:color-mix(in srgb,var(--accent) 28%,var(--line))}
+  .tlword.tlscene.hi{background:color-mix(in srgb,var(--accent) 22%,#17181b)}
+  .tlw-mv{position:absolute;top:4px;width:16px;height:18px;line-height:16px;text-align:center;
+          background:var(--accent2);color:#04210f;border:1px solid #0a3d1e;border-radius:5px;font-size:10px;font-weight:700;
+          cursor:pointer;z-index:9;box-shadow:0 2px 6px rgba(0,0,0,.45)}
+  .tlw-mv.l{left:-8px} .tlw-mv.r{right:-8px}
+  .tlw-mv:hover{filter:brightness(1.12)}
+  .tlword.dragging{cursor:grabbing;z-index:6;opacity:.92}
+  .tlw-edge{position:absolute;top:0;bottom:0;width:7px;z-index:2;cursor:ew-resize}
+  .tlw-edge.l{left:-1px} .tlw-edge.r{right:-1px}
+  .tlword:hover .tlw-edge{background:rgba(73,167,129,.5)}
+  .tlword.narrow .tlw-edge{display:none}
+  body.tl-dragging,body.tl-dragging *{user-select:none}
+  .tlsnap{position:absolute;top:0;bottom:0;width:1px;background:var(--accent2);pointer-events:none;z-index:7;display:none}
+  .tlline{position:absolute;bottom:6px;height:16px;background:rgba(73,167,129,.12);border:1px solid rgba(73,167,129,.4);border-radius:5px}
+  .tlkin{position:absolute;top:40px;height:22px;line-height:22px;background:#2b1a3a;border:1px solid #7c4dff;border-radius:6px;color:#d9c9ff;font-size:11px;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;z-index:4}
+  .tlkin.on{box-shadow:0 0 0 1px #b39dff inset;color:#fff}
+  .tlplay{position:absolute;top:0;bottom:0;width:2px;background:#ff5c5c;pointer-events:none;z-index:5}
+  .kinlist{display:flex;flex-direction:column;gap:6px}
+  .kinrow{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);cursor:pointer;font-size:12px}
+  .kinrow.on{border-color:#7c4dff;box-shadow:0 0 0 1px #7c4dff inset}
+  .kinrow .grow{flex:1}
+  .kinrow .x{color:var(--dim);cursor:pointer;padding:0 3px}
+  .kinrow .x:hover{color:#ff6b6b}
+
+  .empty{color:var(--dim);text-align:center;margin:auto;max-width:380px;display:flex;flex-direction:column;gap:14px;align-items:center}
+  .empty h2{margin:0;color:var(--ink);font-weight:700}
+  .langpick{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+
+  /* ---- landing / homepage (Kalakar dark + green) ---- */
+  .landing{position:fixed;top:52px;left:0;right:0;bottom:0;z-index:50;overflow:auto;
+    background:radial-gradient(1100px 620px at 16% -10%, rgba(73,167,129,.18), transparent 60%),
+               radial-gradient(920px 560px at 94% 6%, rgba(73,167,129,.10), transparent 55%),
+               radial-gradient(700px 500px at 50% 118%, rgba(73,167,129,.06), transparent 60%),
+               linear-gradient(180deg,#0a0a0c,#0a0a0c 55%)}
+  .landing::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:64px 64px;mask-image:radial-gradient(circle at 50% 34%,#000,transparent 72%);-webkit-mask-image:radial-gradient(circle at 50% 34%,#000,transparent 72%)}
+  .landing-scroll{position:relative;min-height:100%;display:flex;align-items:center;justify-content:center;padding:44px 24px}
+  .landing-inner{width:100%;max-width:940px;margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+  .landing-badge{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.02em;color:#cfd6d2;
+    background:rgba(255,255,255,.045);border:1px solid rgba(73,167,129,.28);border-radius:999px;padding:7px 15px}
+  .landing-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent2);box-shadow:0 0 10px var(--accent2)}
+  .landing-title{margin:2px 0 0;font-size:clamp(30px,5vw,52px);line-height:1.05;font-weight:800;letter-spacing:-.02em;color:#f4f4f5}
+  .landing-title .grad{background:linear-gradient(92deg,#49a781,#5fcf9f 52%,#9ff0cf);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .landing-sub{margin:0;max-width:600px;color:#9aa39d;font-size:15.5px;line-height:1.62}
+  .landing-drop{width:100%;max-width:560px;margin-top:8px;border:1.5px dashed rgba(73,167,129,.34);border-radius:18px;
+    background:linear-gradient(180deg,rgba(23,24,27,.82),rgba(12,12,14,.62));
+    padding:30px 26px 24px;display:flex;flex-direction:column;align-items:center;gap:13px;
+    transition:border-color .18s,box-shadow .18s,transform .18s;cursor:pointer}
+  .landing-drop:hover,.landing-drop.dragover{border-color:var(--accent);box-shadow:0 24px 64px rgba(73,167,129,.20);transform:translateY(-2px)}
+  .landing-drop.dragover{border-style:solid;background:linear-gradient(180deg,rgba(28,34,31,.9),rgba(14,16,15,.7))}
+  .landing-drop-ic{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:25px;
+    background:linear-gradient(180deg,#1d2a24,#141a17);border:1px solid rgba(73,167,129,.28);color:#7fd3ab}
+  .landing-drop-main{font-size:18px;font-weight:700;color:#e9eff9}
+  .landing-drop-sub{font-size:12.5px;color:#7f8ea3}
+  .landing-cta{padding:11px 26px;font-size:15px;font-weight:700;border-radius:11px;box-shadow:0 12px 30px rgba(34,197,94,.22)}
+  .landing-lang{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:6px;padding-top:15px;border-top:1px solid rgba(255,255,255,.06);width:100%}
+  .landing-hint{font-size:11.5px;max-width:440px;min-height:14px}
+  .landing-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;margin-top:10px}
+  .feat{background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:17px 16px;text-align:left;display:flex;flex-direction:column;gap:7px}
+  .feat-ic{font-size:21px;line-height:1}
+  .feat-t{font-weight:700;color:#e9eff9;font-size:14px}
+  .feat-d{color:#8494a9;font-size:12.5px;line-height:1.5}
+  .landing-foot{color:#61708a;font-size:11.5px;margin-top:2px}
+  @media(max-width:720px){.landing-feats{grid-template-columns:1fr}}
+  dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:var(--radius);padding:0;max-width:90vw}
+  dialog::backdrop{background:rgba(0,0,0,.6)}
+  .dlg-b{padding:18px;display:flex;flex-direction:column;gap:12px;min-width:360px}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+  <div id="progressBox" class="progress-overlay" style="display:none">
+    <div class="progress-card">
+      <div class="progress-spinner"></div>
+      <div id="progressTitle" class="progress-title">Working…</div>
+      <div id="progressSub" class="progress-sub"></div>
+      <button id="progressCancel" class="ghost" style="margin-top:16px">Cancel</button>
+    </div>
+  </div>
+
+  <!-- HOMEPAGE / welcome (full-area overlay below the header; hidden once a project loads) -->
+  <div id="welcome" class="landing">
+    <div class="landing-scroll">
+      <div class="landing-inner">
+        <div class="landing-badge"><span class="dot"></span> Hinglish · Hindi · English · frame-perfect</div>
+        <h1 class="landing-title">Studio-grade captions,<br><span class="grad">burned in automatically.</span></h1>
+        <p class="landing-sub">Drop a video and it transcribes accurate Hindi, Hinglish or English with word-by-word timing locked to the audio. Then style it, highlight the power words, and export a hard-subtitled MP4.</p>
+
+        <div id="dropZone" class="landing-drop">
+          <div class="landing-drop-ic">⬆</div>
+          <div class="landing-drop-main">Drop a video here</div>
+          <div class="landing-drop-sub">MP4, MOV or WebM — or pick one</div>
+          <button id="btnOpen2" class="go landing-cta">Choose a video</button>
+          <button id="btnDemo" class="landing-cta" title="Load a small, already-transcribed clip to preview changes instantly" style="background:transparent;border:1px solid var(--line);box-shadow:none;color:var(--ink)">▶ Load demo clip</button>
+          <div class="landing-lang">
+            <label class="f">Language <select id="langSel"></select></label>
+            <label class="f" id="scriptWrap" style="display:none">Script
+              <select id="scriptSel"><option value="native">Native (Devanagari)</option><option value="roman">Roman (Hinglish)</option></select>
+            </label>
+          </div>
+          <div class="hint landing-hint" id="langHint"></div>
+        </div>
+
+        <div class="landing-feats">
+          <div class="feat"><div class="feat-ic">🎯</div><div class="feat-t">Frame-perfect timing</div><div class="feat-d">Every word is force-aligned to the audio at 20 ms, so captions never drift, even on long clips.</div></div>
+          <div class="feat"><div class="feat-ic">🪄</div><div class="feat-t">Accurate Hinglish</div><div class="feat-d">Gemini reads code-switched speech and writes it the way creators actually type it.</div></div>
+          <div class="feat"><div class="feat-ic">🔥</div><div class="feat-t">Burn-in export</div><div class="feat-d">Pick a creator style, auto-highlight power words, and render a hard-subtitled MP4 on the server.</div></div>
+        </div>
+
+        <div class="landing-foot">Captions·Studio — runs on your machine and on the web.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hdr">
+    <div class="logo">Captions·<b>Studio</b></div>
+    <span id="projName" class="hint"></span>
+    <div class="sp"></div>
+    <button id="undoBtn" title="Undo (Ctrl+Z)" disabled>↶</button>
+    <button id="redoBtn" title="Redo (Ctrl+Y)" disabled>↷</button>
+    <button id="btnHome" title="Back to the start screen — pick a new video and transcription method" disabled>🏠 New</button>
+    <button id="btnOpen">Open video</button>
+    <button id="btnSrt" disabled>Export SRT</button>
+    <button id="btnPreview" disabled>Preview clip</button>
+    <button id="btnExport" class="go" disabled>Export video</button>
+    <button id="btnExportAlpha" title="Export the captions ONLY on a transparent background (ProRes 4444 .mov) — drop it on a track ABOVE your footage in Premiere / After Effects" disabled>Export alpha .mov</button>
+    <button id="btnUnlock" title="Unlock layout — move lines &amp; words directly on the video" disabled>🔓 Unlock</button>
+    <button id="btnSettings" title="Settings">⚙</button>
+    <button id="updateBtn" class="upd" style="display:none" title="A new version has been downloaded — click to restart into it">⬆ Update ready — Restart</button>
+    <span id="status" class="status">—</span>
+  </div>
+
+  <!-- FAR LEFT: Kalakar icon rail -->
+  <nav class="rail" id="rail">
+    <button class="railItem on" id="railCaptions" title="Captions"><span class="ic">▦</span><span class="lb">Captions</span></button>
+    <button class="railItem" id="railFonts" title="Add a custom font (.ttf / .otf / .woff)"><span class="ic">A</span><span class="lb">Fonts</span></button>
+    <button class="railItem" id="railLibrary" title="Template library"><span class="ic">❏</span><span class="lb">Library</span></button>
+  </nav>
+
+  <div class="editor">
+    <!-- LEFT: captions list -->
+    <aside class="caps">
+      <div class="panelHead">Captions <span class="sp"></span><button id="btnFind" title="Find & replace (Ctrl+F)">🔍 Find</button><button id="btnAddLine" title="Add an empty line you can drag or move words into">＋ Line</button><button id="btnDepunct" title="Remove punctuation from all words">Remove Punctuation</button></div>
+      <div id="findBar" class="findBar" style="display:none">
+        <input id="findInp" type="text" placeholder="Find…" autocomplete="off"/>
+        <input id="replInp" type="text" placeholder="Replace with…" autocomplete="off"/>
+        <label class="findCase" title="Match case"><input type="checkbox" id="findCase"/>Aa</label>
+        <span id="findCount" class="findCount"></span>
+        <button id="findPrev" title="Previous match">↑</button>
+        <button id="findNext" title="Next match">↓</button>
+        <button id="replOne" title="Replace this match">Replace</button>
+        <button id="replAll" title="Replace all matches">All</button>
+      </div>
+      <div id="words" class="words"></div>
+    </aside>
+
+    <!-- CENTER: preview -->
+    <section class="stagewrap">
+      <div class="stage">
+        <div id="vwrap" class="vwrap" style="display:none">
+          <video id="video" playsinline preload="auto"></video>
+          <div id="capGhost" class="cap-ghost" style="display:none"><div class="cap-ghost-arrow">⌃⌃</div><div class="cap-ghost-label">Original position of the caption</div></div>
+          <div id="capHandle" class="cap-handle" style="display:none"></div>
+          <button id="capFinder" class="cap-finder" style="display:none" title="Show the original position of this stack">⌖</button>
+          <div id="capToolbar" class="cap-toolbar" style="display:none">
+            <div class="ct-row ct-tabs">
+              <button class="ct-tab" data-lvl="stack">Stack</button>
+              <button class="ct-tab" data-lvl="line">Lines</button>
+              <button class="ct-tab" data-lvl="word">Words</button>
+              <span class="ct-grow"></span>
+              <button class="ct-x" id="ctReset" title="Reset this element">↺</button>
+              <button class="ct-x" id="ctClose" title="Done">✕</button>
+            </div>
+            <div class="ct-row ct-icons" id="ctIcons"></div>
+            <div class="ct-pop" id="ctPop" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+      <div class="pbar" id="pbar" style="display:none">
+        <button id="playBtn">▶</button>
+        <span id="tlabel" class="t">0.00 / 0.00</span>
+        <input id="seek" type="range" min="0" max="1000" value="0" step="1" />
+      </div>
+    </section>
+
+    <!-- RIGHT: inspector tabs -->
+    <aside class="inspector" id="inspector" style="display:none">
+      <div class="tabs">
+        <button data-tab="Text" class="on">Style</button>
+        <button data-tab="Templates">Templates</button>
+        <button data-tab="Animate">Animate</button>
+        <button data-tab="Effects">Effects</button>
+        <button data-tab="Transitions">Transitions</button>
+        <button data-tab="Kinetic">Kinetic</button>
+        <button data-tab="Layout">Layout</button>
+      </div>
+      <div class="tabpanels">
+        <!-- TEXT -->
+        <div id="tabText" class="tabpanel on">
+          <!-- TRANSCRIPTION -->
+          <details class="sec"><summary>Transcription</summary>
+            <div class="secbody">
+              <div class="row">
+                <label class="f">Language <select id="langSel2"></select></label>
+                <label class="f" id="scriptWrap2" style="display:none">Script <select id="scriptSel2"><option value="native">Native</option><option value="roman">Roman</option></select></label>
+              </div>
+              <div class="row">
+                <button id="btnReTx" title="Re-run transcription with this language/script">↻ Re-transcribe</button>
+                <button id="btnPolish" class="ai" title="Fix spelling to natural creator-style (Gemini)" style="display:none">✨ Natural spelling</button>
+              </div>
+            </div>
+          </details>
+
+          <!-- FONT -->
+          <details class="sec" open><summary>Font</summary>
+            <div class="secbody">
+              <div class="ctl"><span>Font</span><div class="row" style="display:flex;gap:6px;align-items:center"><select id="fontSel" style="flex:1"></select><button id="addFontBtn" title="Add a font file (.ttf / .otf / .woff)" style="padding:6px 10px;white-space:nowrap">+ Font</button></div></div>
+              <div class="row two">
+                <div class="ctl"><span>Size</span><input id="fontSize" type="number" min="20" max="200" step="1"/></div>
+                <div class="ctl"><span>Letter spacing</span><input id="letterSp" type="number" min="-10" max="30" step="0.5"/></div>
+              </div>
+              <div class="row two">
+                <div class="ctl"><span>Line height</span><input id="lineHt" type="number" min="0.8" max="2.2" step="0.05"/></div>
+                <div class="ctl"><span>Weight</span><select id="weightSel"><option value="400">Regular</option><option value="500">Medium</option><option value="600">SemiBold</option><option value="700">Bold</option><option value="800">ExtraBold</option><option value="900">Black</option></select></div>
+              </div>
+              <div class="ctl"><span>Alignment</span>
+                <div class="seg-toggle" id="alignToggle"><button data-al="left">Left</button><button data-al="center" class="on">Center</button><button data-al="right">Right</button></div>
+              </div>
+              <div class="ctl"><span>Case</span>
+                <select id="caseSel"><option value="">As spoken</option><option value="upper">UPPERCASE</option><option value="lower">lowercase</option></select>
+              </div>
+            </div>
+          </details>
+
+          <!-- COLOR -->
+          <details class="sec" open><summary>Color</summary>
+            <div class="secbody">
+              <div class="row two">
+                <div class="ctl"><span>Text color</span><div class="rowflex"><input id="colPrimary" type="color"/><input id="colPrimaryHex" type="text" style="width:82px"/></div></div>
+                <div class="ctl"><span>Highlight color</span><div class="rowflex"><input id="colAccent" type="color"/><input id="colAccentHex" type="text" style="width:82px"/></div></div>
+              </div>
+              <div class="ctl"><span>Highlight size <b id="hiScaleVal" class="seg-val"></b></span><input id="hiScale" type="range" min="1" max="2.5" step="0.05" value="1"/></div>
+              <div class="ctl"><span>Gradient fill</span><label class="rowflex" style="cursor:pointer"><input type="checkbox" id="gradOn"/><span style="color:var(--dim);font-size:12px">use a gradient instead of solid text</span></label></div>
+              <div id="gradCtls" style="display:none">
+                <div class="row two">
+                  <div class="ctl"><span>From</span><input id="gradFrom" type="color" value="#ffffff"/></div>
+                  <div class="ctl"><span>To</span><input id="gradTo" type="color" value="#8ed4ff"/></div>
+                </div>
+                <div class="row two">
+                  <div class="ctl"><span>Angle</span><input id="gradAngle" type="number" min="0" max="360" step="5" value="180"/></div>
+                  <div class="ctl"><span>Level</span><select id="gradLevel"><option value="line">Whole line</option><option value="word">Per word</option></select></div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- BACKGROUND -->
+          <details class="sec"><summary>Background</summary>
+            <div class="secbody">
+              <div class="ctl"><span>Background box</span>
+                <div class="rowflex"><label class="f"><input type="checkbox" id="boxOn"/> Enable</label>
+                  <input id="boxColor" type="color"/><input id="boxColorHex" type="text" style="width:82px"/></div>
+              </div>
+              <div class="ctl"><span>Box opacity <b id="boxOpVal" class="seg-val"></b></span><input id="boxOpacity" type="range" min="0" max="1" step="0.02"/></div>
+            </div>
+          </details>
+
+          <!-- POSITION -->
+          <details class="sec"><summary>Position</summary>
+            <div class="secbody">
+              <div class="row two">
+                <div class="ctl"><span>Position X <b id="posXVal" class="seg-val"></b></span><input id="posX" type="range" min="0" max="100" step="1"/></div>
+                <div class="ctl"><span>Position Y <b id="posYVal" class="seg-val"></b></span><input id="posY" type="range" min="0" max="100" step="1"/></div>
+              </div>
+            </div>
+          </details>
+
+          <!-- SEGMENTATION -->
+          <details class="sec"><summary>Segmentation &amp; timing</summary>
+            <div class="secbody">
+              <div class="row two">
+                <div class="ctl"><span>Break by</span>
+                  <select id="segMode"><option value="chars">characters</option><option value="words">words</option><option value="duration">seconds</option></select></div>
+                <div class="ctl"><span>Lines</span>
+                  <select id="linesSel"><option value="2">Up to 2 lines</option><option value="1">Single line</option></select></div>
+              </div>
+              <div class="ctl"><span>Max per scene <b id="segValLbl" class="seg-val">15</b></span><input id="segMax" type="range" min="1" max="40" value="15"/></div>
+              <label class="ctl" style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="segAutoBreak"/><span>Auto-break at pauses <small style="color:var(--dim)">— splits at silences; threshold scales with length</small></span></label>
+              <div class="ctl"><span>Timing <b id="offVal" class="seg-val">+0.12s</b> (earlier ← → later)</span><input id="offset" type="range" min="-0.4" max="0.4" step="0.02" value="0.12"/></div>
+            </div>
+          </details>
+
+          <!-- HIGHLIGHT -->
+          <details class="sec" open><summary>Highlight</summary>
+            <div class="secbody">
+              <div class="rules">
+                <label><input type="checkbox" id="rNumbers" checked/> numbers</label>
+                <label><input type="checkbox" id="rAllcaps" checked/> acronyms</label>
+                <label><input type="checkbox" id="rKeywords"/> keywords</label>
+                <label><input type="checkbox" id="rLongest"/> longest</label>
+              </div>
+              <input type="text" id="kw" placeholder="free, now, secret"/>
+              <div class="row">
+                <button id="btnApplyHi">Apply</button>
+                <button id="btnAi" class="ai" title="Let Gemini pick the power words">✨ AI pick</button>
+                <button id="btnClearHi">Clear</button>
+                <button id="btnResetStyle" class="ghost" title="Clear your overrides, back to the template">Reset style</button>
+              </div>
+              <div class="hint">Click a word to highlight · ✎ to edit its text · drag a word to another line.</div>
+            </div>
+          </details>
+        </div>
+
+        <!-- TEMPLATES -->
+        <div id="tabTemplates" class="tabpanel">
+          <div class="hint">Pick a creator style. You can then tweak it in the Text tab.</div>
+          <div class="tpl-save"><button id="btnSaveTpl" title="Save the current look as a reusable template, kept on this device (survives app updates)">＋ Save current as template</button></div>
+          <div id="tpls" class="tpls"></div>
+        </div>
+
+        <!-- TRANSITIONS -->
+        <div id="tabTransitions" class="tabpanel">
+          <h3>Apply to</h3>
+          <div class="seg-toggle" id="scopeToggle">
+            <button data-scope="line">Line</button>
+            <button data-scope="word" class="on">Word</button>
+          </div>
+          <div class="hint">Line = the whole caption animates in as one. Word = each word animates as it's spoken.</div>
+          <h3>Entrance</h3>
+          <div class="angrid anrid" id="entGrid">
+            <div class="an" data-ent="none">None</div>
+            <div class="an" data-ent="fade">Fade</div>
+            <div class="an" data-ent="pop">Pop</div>
+            <div class="an" data-ent="zoom">Zoom</div>
+            <div class="an" data-ent="scale">Scale</div>
+            <div class="an" data-ent="slide">Slide ↑</div>
+            <div class="an" data-ent="blur-rise">Blur ↑</div>
+            <div class="an" data-ent="bounce">Bounce</div>
+            <div class="an" data-ent="whip">Whip</div>
+          </div>
+          <div class="ctl"><span>Speed <b id="spdVal" class="seg-val"></b></span><input id="spd" type="range" min="0" max="100" step="1"/></div>
+          <div class="row two">
+            <div class="ctl"><span>Direction</span><select id="trDir"><option value="">Default</option><option value="up">From below ↑</option><option value="down">From above ↓</option><option value="left">From right ←</option><option value="right">From left →</option></select></div>
+            <div class="ctl"><span>Distance <b id="trDistVal" class="seg-val"></b></span><input id="trDist" type="range" min="0" max="120" step="2" value="26"/></div>
+          </div>
+          <div class="hint">Higher = snappier (shorter animation).</div>
+          <div id="stackAlignBlock" style="display:none">
+            <h3>Focus 3-line — side lines</h3>
+            <div class="seg-toggle" id="stackAlignToggle">
+              <button data-sa="left">Left</button>
+              <button data-sa="center">Center</button>
+              <button data-sa="right">Right</button>
+              <button data-sa="stagger">Stagger</button>
+            </div>
+            <div class="hint">Where the words before/after the highlight sit. Stagger = before-line left, after-line right (the diagonal look). Click a word (or its ✦ Highlight) to pin it as the big centre; otherwise the spoken word leads.</div>
+          </div>
+        </div>
+
+        <!-- ANIMATE — pick the caption animation style (applies to the whole video) -->
+        <div id="tabAnimate" class="tabpanel">
+          <h3>Animation style</h3>
+          <div class="angrid" id="animGrid">
+            <div class="an" data-anim="word-appear">Word by Word</div>
+            <div class="an" data-anim="word-pop">Word Pop</div>
+            <div class="an" data-anim="movebox">Sliding Box</div>
+            <div class="an" data-anim="typewriter">Typewriter</div>
+            <div class="an" data-anim="ghost">Fade-in reveal</div>
+            <div class="an" data-anim="sentence">Whole Sentence</div>
+            <div class="an" data-anim="stack">3-Line Focus</div>
+          </div>
+          <div class="hint">How the caption animates as it's spoken. Applies to the whole video (change the base look in Templates first).</div>
+          <div class="ctl"><span>Speed <b id="animSpdVal" class="seg-val"></b></span><input id="animSpd" type="range" min="0" max="100" step="1"/></div>
+          <div class="row two">
+            <div class="ctl"><span>Fade in <b id="animFadeInVal" class="seg-val"></b></span><input id="animFadeIn" type="range" min="0" max="1500" step="50"/></div>
+            <div class="ctl"><span>Fade out <b id="animFadeOutVal" class="seg-val"></b></span><input id="animFadeOut" type="range" min="0" max="1500" step="50"/></div>
+          </div>
+          <div class="ctl" id="ghostIdleRow" style="display:none"><span>Idle opacity <b id="ghostIdleVal" class="seg-val"></b></span><input id="ghostIdle" type="range" min="0" max="90" step="5"/></div>
+        </div>
+
+        <!-- EFFECTS — shadow / glow / blur / outline / transparency -->
+        <div id="tabEffects" class="tabpanel">
+          <h3>Effect</h3>
+          <div class="angrid" id="fxGrid">
+            <div class="an" data-fx="none">None</div>
+            <div class="an" data-fx="soft-shadow">Soft shadow</div>
+            <div class="an" data-fx="hard-shadow">Hard shadow</div>
+            <div class="an" data-fx="glow">Glow</div>
+            <div class="an" data-fx="blur">Blur</div>
+          </div>
+          <div class="ctl" id="fxGlowRow" style="display:none"><span>Glow color</span><div class="rowflex"><input id="fxGlowColor" type="color"/><input id="fxGlowHex" type="text" style="width:78px"/></div></div>
+          <div class="ctl" id="fxGlowStrRow" style="display:none"><span>Glow strength <b id="fxGlowStrVal" class="seg-val"></b></span><input id="fxGlowStr" type="range" min="0" max="150" step="5" value="50"/></div>
+          <div class="ctl" id="fxBlurRow" style="display:none"><span>Blur amount <b id="fxBlurVal" class="seg-val"></b></span><input id="fxBlur" type="range" min="1" max="12" step="0.5"/></div>
+          <div class="divider"></div>
+          <h3>Outline</h3>
+          <div class="ctl"><label class="f"><input type="checkbox" id="fxOutlineOn"/> Outline the text</label></div>
+          <div class="row two">
+            <div class="ctl"><span>Width <b id="fxOutWVal" class="seg-val"></b></span><input id="fxOutW" type="range" min="0" max="14" step="1"/></div>
+            <div class="ctl"><span>Color</span><div class="rowflex"><input id="fxOutColor" type="color"/></div></div>
+          </div>
+          <div class="divider"></div>
+          <h3>Transparency</h3>
+          <div class="ctl"><span>Opacity <b id="fxOpacityVal" class="seg-val"></b></span><input id="fxOpacity" type="range" min="10" max="100" step="1"/></div>
+        </div>
+
+        <!-- KINETIC -->
+        <div id="tabKinetic" class="tabpanel">
+          <div class="row"><button id="kinAdd" class="go">+ Add at playhead</button></div>
+          <div class="hint">Big animated word pop-outs over the video. Or right-click a caption word → Make kinetic.</div>
+          <div id="kinList" class="kinlist"></div>
+          <div id="kinForm" style="display:none;flex-direction:column;gap:12px">
+            <div class="divider"></div>
+            <div class="ctl"><span>Text</span><input id="kinText" type="text"/></div>
+            <div class="ctl"><span>Preset</span>
+              <div class="angrid" id="kinPresets">
+                <div class="an" data-kp="scale-punch">Punch</div>
+                <div class="an" data-kp="rise-blur">Rise</div>
+                <div class="an" data-kp="color-card">Card</div>
+                <div class="an" data-kp="typewriter">Type</div>
+                <div class="an" data-kp="word-swap">Swap</div>
+                <div class="an" data-kp="shake">Shake</div>
+                <div class="an" data-kp="highlighter-sweep">Sweep</div>
+              </div>
+            </div>
+            <div class="row two">
+              <div class="ctl"><span>Position X <b id="kinXVal" class="seg-val"></b></span><input id="kinX" type="range" min="0" max="100" step="1"/></div>
+              <div class="ctl"><span>Position Y <b id="kinYVal" class="seg-val"></b></span><input id="kinY" type="range" min="0" max="100" step="1"/></div>
+            </div>
+            <div class="row two">
+              <div class="ctl"><span>Size <b id="kinSizeVal" class="seg-val"></b></span><input id="kinSize" type="range" min="0.4" max="3" step="0.1"/></div>
+              <div class="ctl"><span>Color</span><div class="rowflex"><input id="kinColor" type="color"/><input id="kinColorHex" type="text" style="width:78px"/></div></div>
+            </div>
+            <div class="hint" id="kinTimeHint"></div>
+            <div class="row"><button id="kinDelete" class="ghost">Delete this kinetic</button></div>
+          </div>
+        </div>
+
+        <!-- LAYOUT (advanced Kalakar: unlock, per-line / per-word overrides, spotlight, wand) -->
+        <div id="tabLayout" class="tabpanel">
+          <div class="row"><button id="btnUnlock2" class="primary">🔓 Unlock layout</button><span class="hint" id="unlockHint">Move lines &amp; words directly on the video.</span></div>
+          <div class="hint">Unlock, then click a line or word on the video. Drag to move it. Edits are per-line / per-word and never touch the rest.</div>
+          <div class="divider"></div>
+          <div id="layoutBody"></div>
+          <div class="divider"></div>
+          <div class="row">
+            <button id="btnResetPos" class="ghost" title="Move every line back to the template position">Reset positions</button>
+            <button id="btnResetLayout" class="ghost" title="Clear ALL per-line and per-word overrides">Reset all layout</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- BOTTOM: timeline -->
+  <div class="timeline" id="tlWrap" style="visibility:hidden">
+    <div class="tlbar">
+      <span>Timeline</span>
+      <div class="tlViewToggle" id="tlViewToggle" title="Show the timeline by word or by full sentence">
+        <button data-tlv="word" class="on">Words</button>
+        <button data-tlv="sentence">Sentences</button>
+      </div>
+      <span id="tlInfo"></span>
+      <span class="sp"></span>
+      <label class="f" title="Drag a word to push everything after it too"><input type="checkbox" id="tlRippleCb"/> Ripple</label>
+      <label class="f" title="Snap to neighbouring word edges (hold Alt to disable)"><input type="checkbox" id="tlSnapCb" checked/> Snap</label>
+      <button id="tlShrink" title="Shrink the timeline — give the video full height">⤓</button>
+      <button id="tlExpand" title="Expand the timeline taller">⤒</button>
+      <button id="tlZoomOut" title="Zoom out">–</button>
+      <button id="tlZoomIn" title="Zoom in">+</button>
+    </div>
+    <div class="tlscroll" id="tlScroll">
+      <div class="tlinner" id="tlInner">
+        <canvas id="tlWave"></canvas>
+        <div id="tlWords"></div>
+        <div id="tlKinetic"></div>
+        <div id="tlLines"></div>
+        <div id="tlSnap" class="tlsnap"></div>
+        <div id="tlPlay" class="tlplay" style="left:0"></div>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="settingsDlg">
+    <div class="dlg-b">
+      <b>Settings</b>
+      <label class="f" style="flex-direction:column;align-items:stretch;gap:6px">Hindi / multilingual accuracy
+        <span class="hint">Balanced = whisper-small (~250 MB, fast). High = whisper-medium (~780 MB, more accurate on Hindi/Urdu, noticeably slower). English always uses the fast model.</span>
+        <select id="whisperQuality"><option value="balanced">Balanced (small, fast)</option><option value="high">High accuracy (medium)</option></select>
+      </label>
+      <label class="f" style="flex-direction:column;align-items:stretch;gap:6px">Gemini API key <span class="hint">Optional — powers "✨ AI pick", "✨ Natural spelling", and the "Hinglish (AI - accurate)" mode. Stored locally on this machine only. Get one free at <a href="https://aistudio.google.com/apikey" id="geminiLink">aistudio.google.com/apikey</a>.</span>
+        <input type="password" id="geminiKey" placeholder="AIza…"/>
+      </label>
+      <label class="f" style="gap:8px"><input type="checkbox" id="ctcAlign" checked/> Frame-perfect timing <span class="hint">AI-Hinglish only: aligns each word to the audio at 20 ms (downloads a ~90 MB model once). Off = time words from Whisper instead.</span></label>
+      <div style="display:flex;justify-content:flex-end;gap:8px"><button id="settingsClose">Cancel</button><button id="settingsSave" class="primary">Save</button></div>
+    </div>
+  </dialog>
+
+  <dialog id="previewDlg">
+    <div class="dlg-b">
+      <b id="previewTitle">Preview</b>
+      <video id="previewVid" controls autoplay style="max-height:66vh;max-width:80vw;border-radius:6px"></video>
+      <div id="previewInfo" class="hint"></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px"><button id="previewShow" style="display:none">Show in folder</button><button id="closePrev">Close</button></div>
+    </div>
+  </dialog>
+
+  <script type="module" src="./app.mjs"></script>
+</body>
+</html>

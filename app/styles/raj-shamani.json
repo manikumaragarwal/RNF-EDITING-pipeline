@@ -1,0 +1,36 @@
+{
+  "id": "raj-shamani",
+  "label": "Raj Shamani",
+  "font": "Poppins ExtraBold",
+  "size": 64,
+  "weight": 800,
+  "case": null,
+  "primary": "#FFFFFF",
+  "accent": "#FF3B30",
+  "chipText": "#FFFFFF",
+  "highlightMode": "movebox",
+  "moveBox": { "color": "#FF3B30", "radius": 10, "padX": 16, "padY": 8, "opacity": 1 },
+  "moveMs": 200,
+  "entrance": "rise",
+  "animScope": "line",
+  "entranceMs": 180,
+  "activeScale": 1,
+  "outline": {
+    "color": "#000000",
+    "width": 3
+  },
+  "shadow": 2,
+  "box": {
+    "enabled": false
+  },
+  "position": {
+    "x": 50,
+    "y": 82
+  },
+  "maxWidth": 86,
+  "segmentation": {
+    "mode": "chars",
+    "max": 24
+  },
+  "tail": 0.05
+}
