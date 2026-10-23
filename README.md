@@ -7,11 +7,33 @@ Hinglish captions, gated by an automatic QC check.
 
 **AI agents (Codex etc.): start at [`AGENTS.md`](AGENTS.md).** Everything you need is linked from there.
 
+Two ways to run it:
+- **Laptop (Windows / macOS / Linux): HyperFrames path, `hf/`.** Node + ffmpeg + yt-dlp, nothing else to build. Runbook: `.agents/skills/rnf-hyperframes/SKILL.md`.
+- **Linux server: original engine, `app/`.** Caption Studio server (Electron + xvfb). Runbook: `.agents/skills/rnf-auto-editor/SKILL.md`.
+
+## Quick start on Windows
+```powershell
+winget install OpenJS.NodeJS.LTS Gyan.FFmpeg yt-dlp.yt-dlp
+# new terminal
+git clone https://github.com/manikumaragarwal/RNF-EDITING-pipeline.git C:\rnf
+cd C:\rnf
+copy config\rnf.env.example .env        # add GROQ_API_KEY
+# copy the licensed music into assets\sfx-pack\bg-music\
+node hf\doctor.mjs --yt
+
+node hf\get-gameplay.mjs "Who's Cheating"          # or drop your own clips in assets\game-assets\<slug>\gameplay\
+node hf\prep.mjs "D:\clips\Who's Cheating.mp4"     # then complete reels\who-s-cheating\plan.json
+node hf\build.mjs reels\who-s-cheating
+node hf\finish.mjs reels\who-s-cheating            # -> reels\who-s-cheating\final.mp4 + qc-frames\
+```
+
 ## Layout
 ```
 AGENTS.md                          agent entry point + hard rules
 CODEX-PROMPT.md                    paste-ready prompt to hand a coding agent
-.agents/skills/rnf-auto-editor/    the step-by-step runbook (SKILL.md)
+.agents/skills/rnf-hyperframes/    laptop runbook (HyperFrames)
+.agents/skills/rnf-auto-editor/    server runbook (original engine)
+hf/                                HyperFrames pipeline: doctor, get-gameplay, prep, build, finish
 docs/                              locked rules, style, architecture, gotchas, footage, channel
 app/                               Caption Studio server + engine + RNF orchestrator (app/web/rnf-*.mjs)
 footage/                           Steam / YouTube / site gameplay gathering + Gemini b-roll index
@@ -19,7 +41,7 @@ assets/sfx-pack/                   riser, cash register, clicks; bg-music/ = bri
 config/rnf.env.example             every env var
 ```
 
-## Setup
+## Setup (server path)
 Requirements: Node 20+, ffmpeg + ffprobe (with libass), Python 3 with `numpy` and `Pillow`,
 `xvfb-run` and Electron's Linux libs (headless caption render), `yt-dlp`, optional `rclone`.
 Linux is the tested platform.

@@ -6,11 +6,12 @@
 //   node rnf-yt-gameplay.mjs "Game A" "Game B" ...        (gather only)
 //   node rnf-yt-gameplay.mjs --rerender "Game A" ...       (gather + clear + relaunch batch)
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { SEED_ROOT, YTDLP, SECRETS, ARCHIVE } from './rnf-paths.mjs';
 
-const WEB = path.dirname(new URL(import.meta.url).pathname);
+const WEB = path.dirname(fileURLToPath(import.meta.url));
 const SRC = path.join(WEB, 'work', 'rnf-batch-src');
 const RNF = path.join(WEB, 'work', 'rnf');
 const NODE = process.execPath;
@@ -19,11 +20,13 @@ const NODE = process.execPath;
 // the load so no single account trips YouTube's per-session bot-check as fast.
 function cookieFiles() {
   try { return fs.readdirSync(SECRETS).filter((f) => /^yt-cookies.*\.txt$/i.test(f)).sort().map((f) => path.join(SECRETS, f)); }
-  catch { return [path.join(SECRETS, 'yt-cookies.txt')]; }
+  catch { return []; }
 }
 const COOKIE_LIST = cookieFiles();
 let cookieIdx = 0;
-const nextCookie = () => COOKIE_LIST[(cookieIdx++) % Math.max(1, COOKIE_LIST.length)] || path.join(SECRETS, 'yt-cookies.txt');
+// null = no cookies. Never pass a missing file: yt-dlp crashes on it (FileNotFoundError).
+const nextCookie = () => (COOKIE_LIST.length ? COOKIE_LIST[(cookieIdx++) % COOKIE_LIST.length] : null);
+const cookieArgs = (c) => (c ? ['--cookies', c] : []);
 // slow-drip knobs: YouTube bot-checks this datacenter IP after a few rapid downloads, so a
 // retry pass spaces games far apart (YT_DELAY_MS) and can wait out an initial cooldown (YT_START_DELAY_MS).
 const DELAY_MS = parseInt(process.env.YT_DELAY_MS || '4000', 10);
@@ -35,7 +38,7 @@ const ffdur = (f) => { try { return parseFloat(spawnSync('ffprobe', ['-v', 'erro
 
 // yt-dlp flags (WITHOUT the binary; run() takes the binary separately) for a real download
 function ytFlags(cookie) {
-  return ['--cookies', cookie, '--js-runtimes', `node:${NODE}`, '--remote-components', 'ejs:github', '--no-playlist'];
+  return [...cookieArgs(cookie), '--js-runtimes', 'node', '--remote-components', 'ejs:github', '--no-playlist'];
 }
 function run(cmd, args, timeoutMs = 240000) {
   return new Promise((resolve) => {
@@ -49,7 +52,7 @@ function run(cmd, args, timeoutMs = 240000) {
 
 // search -> up to N video ids (flat, cheap)
 async function searchIds(query, n = 4, cookie = nextCookie()) {
-  const r = await run(YTDLP, ['--cookies', cookie, '--flat-playlist', '--print', '%(id)s', `ytsearch${n}:${query}`], 90000);
+  const r = await run(YTDLP, [...cookieArgs(cookie), '--flat-playlist', '--print', '%(id)s', `ytsearch${n}:${query}`], 90000);
   return (r.out || '').split('\n').map((s) => s.trim()).filter((s) => /^[a-zA-Z0-9_-]{6,}$/.test(s));
 }
 // download a ~60s mid-video section; return path if valid (>25s), else null
@@ -80,7 +83,7 @@ async function gatherGame(game) {
   if (!ids.length) { log(`  no results for ${game}`); return null; }
   for (const id of ids) {
     const cookie = nextCookie(); // rotate account per download attempt
-    log(`  try ${id} [${path.basename(cookie)}]`);
+    log(`  try ${id} [${cookie ? path.basename(cookie) : 'no cookies'}]`);
     const got = await grabSection(id, path.join(tmp, 'clip.mp4'), cookie);
     if (got) {
       // normalize to mp4 h264 into the seed as yt-1.mp4
@@ -118,7 +121,9 @@ async function gatherGame(game) {
   delete prog.__summary;
   fs.writeFileSync(progFile, JSON.stringify(prog, null, 2));
   const logfd = fs.openSync(path.join(SRC, 'batch-run.log'), 'a');
-  const child = spawn('setsid', ['node', path.join(WEB, 'rnf-batch.mjs'), SRC, '2'], { cwd: WEB, detached: true, stdio: ['ignore', logfd, logfd] });
+  const child = process.platform === 'win32'
+    ? spawn(process.execPath, [path.join(WEB, 'rnf-batch.mjs'), SRC, '2'], { cwd: WEB, detached: true, windowsHide: true, stdio: ['ignore', logfd, logfd] })
+    : spawn('setsid', ['node', path.join(WEB, 'rnf-batch.mjs'), SRC, '2'], { cwd: WEB, detached: true, stdio: ['ignore', logfd, logfd] });
   child.unref();
   log(`BATCH RELAUNCHED to re-render ${ok.length} reels with real gameplay + varied music`);
 })();

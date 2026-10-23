@@ -5,10 +5,11 @@
 // delivers every reel to gdrive:rnf-batch-edits/. Launch DETACHED so it survives teardown:
 //   setsid nohup node rnf-batch.mjs <srcDir> > <srcDir>/batch-run.log 2>&1 < /dev/null &
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { prepare, finalize, projDir, setStatus } from './rnf-auto.mjs';
 
-const SRC = process.argv[2] || path.join(path.dirname(new URL(import.meta.url).pathname), 'work', 'rnf-batch-src');
+const SRC = process.argv[2] || path.join(path.dirname(fileURLToPath(import.meta.url)), 'work', 'rnf-batch-src');
 const CONCURRENCY = parseInt(process.argv[3] || '2', 10);
 const PROGRESS = path.join(SRC, 'batch-progress.json');
 const LOG = path.join(SRC, 'batch-log.txt');

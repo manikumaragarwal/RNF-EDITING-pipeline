@@ -21,3 +21,7 @@ assets/sfx-pack/bg-music/*
 *.mov
 *.mp4
 __pycache__/
+
+# HyperFrames reel projects (rendered per run)
+reels/
+.hyperframes/

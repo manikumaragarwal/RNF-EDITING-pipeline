@@ -33,3 +33,12 @@
 - On a memory-capped host, run batches under a cgroup/scope (`systemd-run --scope -p MemoryMax=4G …`). Uncapped ffmpeg has OOM-killed neighbouring services before.
 - Drive links: IDs can end in `_`, and markdown eats it. Give links in code spans, as `/file/d/<id>/view`.
 - Use ASCII batch filenames so the slug matches the asset folder.
+
+## Windows / laptop (HyperFrames path)
+- **YouTube "no results" for every game on a fresh clone** came from two bugs in `app/web/rnf-yt-gameplay.mjs`, both fixed 2026-10-23: (1) it always passed `--cookies .secrets/yt-cookies.txt` even when the file didn't exist, and yt-dlp crashes with `FileNotFoundError` on a missing cookies file; (2) it built paths from `new URL(import.meta.url).pathname`, which on Windows gives `/C:/Users/...` (and `%20` for spaces), so `mkdir` failed before any search ran. Use `hf/get-gameplay.mjs` on laptops.
+- **Old yt-dlp fails on YouTube** (signature/"n challenge" errors). Update it: `winget upgrade yt-dlp.yt-dlp` or `yt-dlp -U`. `node` must be on PATH (yt-dlp uses it to solve the challenge).
+- **Chrome/Edge cookies** usually can't be read on Windows (`--cookies-from-browser chrome` fails to decrypt). Use Firefox or an exported cookies.txt, or nothing at all on a home connection.
+- **Sparse keyframes freeze HyperFrames video.** It seeks every frame. Every encode in `hf/` uses `-g 30 -keyint_min 30` (1s). If you add media by hand, re-encode it the same way (HyperFrames prints a "sparse keyframes" warning when you forget).
+- **`hyperframes transcribe` needs whisper.cpp** on the machine ("whisper-cpp not found" → empty transcript). The default is Groq's hosted whisper-large-v3 (set `GROQ_API_KEY`), so this only matters without a key.
+- **npx on Windows is a `.cmd`**, which Node only spawns through a shell. `hf/lib.mjs` → `hyperframes()` handles the quoting. Don't call `spawn('npx', ...)` directly.
+- PowerShell has no `set -a; . ./.env`. The `hf/` scripts load `<repo>/.env` themselves.

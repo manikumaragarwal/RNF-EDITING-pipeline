@@ -12,6 +12,7 @@
 // A FAIL holds the reel and writes qc-fail.json. It never deletes anything.
 
 import fs from 'fs';
+import { fileURLToPath } from 'node:url';
 import path from 'path';
 import { execFileSync, spawnSync } from 'child_process';
 
@@ -168,7 +169,7 @@ export function formatResult(r) {
 const isMain = process.argv[1] && process.argv[1].endsWith('rnf-check.mjs');
 if (isMain) {
   const arg = process.argv[2];
-  const ROOT = path.join(path.dirname(new URL(import.meta.url).pathname), 'work', 'rnf');
+  const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), 'work', 'rnf');
   const skipLoudness = process.argv.includes('--fast');
 
   if (!arg) {

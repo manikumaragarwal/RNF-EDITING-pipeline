@@ -5,8 +5,12 @@ hands you a **clean-cut 9:16 talking-head video** whose filename is the game's n
 into a finished reel: gameplay split-screen, animated game logo, music + SFX, Hinglish captions,
 sarcasm tint. Everything in this repo exists so you can do that without asking anyone how.
 
+## Which runbook
+- **Laptop (Windows / macOS / Linux desktop): `.agents/skills/rnf-hyperframes/SKILL.md`.** HyperFrames + plain Node scripts in `hf/`. This is the default.
+- Linux server running the Caption Studio app: `.agents/skills/rnf-auto-editor/SKILL.md` (original engine in `app/`).
+
 ## Read in this order before touching a video
-1. `.agents/skills/rnf-auto-editor/SKILL.md`: the runbook. Step by step, with commands.
+1. The runbook above for your machine. Step by step, with commands.
 2. `docs/locked-rules.md`: every correction the editor has given. **These override everything else.**
 3. `docs/editing-style.md`: the visual grammar (what an RNF reel looks like and why).
 4. `docs/architecture.md`: how the code is wired (two-pass render, files per project, HTTP API).
@@ -23,13 +27,11 @@ sarcasm tint. Everything in this repo exists so you can do that without asking a
 6. **Captions:** Luckiest Guy, ALL CAPS, white, one yellow `#F2CE1F` keyword per line, no outline (hard shadow), line-by-line semantic chunks, game name alone on its own line, spelled exactly like the filename.
 7. **No em-dashes in any on-screen text.** Commas and periods.
 8. **Never delete files.** Move them to `archive/`. Never print or commit keys or cookies.
-9. **Watch it before you call it done.** The QC gate (`rnf-check.mjs`) must pass, then check the frames listed in the SKILL's definition of done yourself.
+9. **Watch it before you call it done.** The QC gate must pass (`hf/finish.mjs`, or `rnf-check.mjs` on the server path), then look at the frames listed in the runbook's definition of done.
 
 ## Environment in one breath
-Node 20+, ffmpeg/ffprobe with libass, Python 3 + numpy + Pillow, `xvfb-run`, Chromium deps for
-Electron, `yt-dlp`, optional `rclone`. `cd app && npm install`, then start the caption server
-(`node web/server.mjs`, port 3016). The pipeline calls that server for transcription and the
-caption alpha render. Keys go in env or `.secrets/` (gitignored). See `README.md` → Setup.
+Laptop path: Node 20+, ffmpeg, yt-dlp, a `GROQ_API_KEY` in `.env`. HyperFrames comes via `npx`.
+Run `node hf/doctor.mjs --yt` first; it names the fix for anything missing. Server path: see `README.md`.
 
 ## When to stop and ask the human
 - You can't find real gameplay for the game (YouTube bot-blocked, no Steam video). Ask for fresh YouTube cookies or their own gameplay clips. Don't ship full-frame.

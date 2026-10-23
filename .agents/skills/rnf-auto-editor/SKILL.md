@@ -3,7 +3,9 @@ name: rnf-auto-editor
 description: Edit a rest.not.found (RNF) gaming reel end to end from a clean-cut 9:16 talking-head video whose filename is the game name. Gathers real gameplay b-roll + the official logo, builds the head-aware 50/50 split, adds music + riser + SFX, sarcasm-only B&W tint, and Luckiest Guy line-by-line Hinglish captions, then QC-gates and delivers. Use for "edit this RNF reel", "run the RNF batch", "re-render <game>", "fix the music/framing/captions on <game>".
 ---
 
-# rnf-auto-editor: the runbook
+# rnf-auto-editor: the runbook (original engine, Linux server)
+
+> On a Windows/macOS laptop use `.agents/skills/rnf-hyperframes/SKILL.md` instead. This engine needs Electron + xvfb + bash.
 
 Paths are relative to the repo root. `app/web/` holds the engine. Rules that override this file:
 `docs/locked-rules.md`.
@@ -97,7 +99,7 @@ node app/web/rnf-run.mjs poster   <id>   # add the logo to an existing final.mp4
 6. `finalize` (Pass B): `head-scan.py` → face crop. Per window, `vstack` gameplay top 960 + face bottom 960. Logo overlay ~3s at the name drop, on top of the split. Captions with time-gated y (seam during splits, chest on full-frame, lower on CTA/face beats). → `final.mp4` → `rnf-check.mjs` QC → rclone (if `RNF_DRIVE_DEST` set).
 
 ## 6. Definition of done (all of these, every reel)
-- [ ] QC passed (`node app/web/rnf-check.mjs app/web/work/rnf/<id>`): 1080x1920, 8-45s, ~-14 LUFS, captions present, b-roll placed, every window moving (min motion > 3).
+- [ ] QC passed (`node app/web/rnf-check.mjs app/web/work/rnf/<id>`): 1080x1920, 8-45s, ~-14 LUFS, captions present, b-roll placed. It does NOT measure motion: check that yourself (sample ~8 top-half frames per window, they must change).
 - [ ] **Hook frames (0-3s):** captions clear of the face.
 - [ ] **3 split frames:** right game, real moving gameplay, full face visible, head top just under the seam, chin inside the panel.
 - [ ] **Name drop:** logo readable for ~3s; game name alone on a yellow line, spelled right.

@@ -4,7 +4,7 @@ The edit is only as good as the gameplay in the top half. Free sources only (no 
 
 ## Priority
 1. **Human-supplied gameplay**: best. Drop into `assets/game-assets/<slug>/gameplay/` or upload in the web UI.
-2. **YouTube gameplay**: `node app/web/rnf-yt-gameplay.mjs "Game A" "Game B"` searches `"<game> gameplay no commentary"`, grabs a ~60s mid-video section (`0:12-1:12`) of the first result over 25s, re-encodes h264, stages `gameplay/yt-1.mp4`. `--rerender` also archives and re-queues those reels. Needs `.secrets/yt-cookies*.txt`. Prefer no-facecam, no loud commentary. **Verify it's the right game.**
+2. **YouTube gameplay**: `node hf/get-gameplay.mjs "Game" --n 2` (cross-platform, cookies optional, only accepts results whose title names the game, writes a contact sheet per clip). The older server script: `node app/web/rnf-yt-gameplay.mjs "Game A" "Game B"` searches `"<game> gameplay no commentary"`, grabs a ~60s mid-video section (`0:12-1:12`) of the first result over 25s, re-encodes h264, stages `gameplay/yt-1.mp4`. `--rerender` also archives and re-queues those reels. Needs `.secrets/yt-cookies*.txt`. Prefer no-facecam, no loud commentary. **Verify it's the right game.**
 3. **Steam trailer**: cinematic, sometimes title cards. A fallback.
 4. **Official site video**: headless Chrome, pull `<video>`/network `.mp4` URLs.
 

@@ -5,13 +5,14 @@
 // rate-limit hiccup never wastes a render, and coverage is verifiable before rendering.
 // Run detached:  setsid nohup node rnf-pregather.mjs <srcDir> > <srcDir>/pregather.log 2>&1 &
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 import { STEAM_EXTRACT, SEED_ROOT } from './rnf-paths.mjs';
 const { extractSteam } = require(STEAM_EXTRACT);
 
-const SRC = process.argv[2] || path.join(path.dirname(new URL(import.meta.url).pathname), 'work', 'rnf-batch-src');
+const SRC = process.argv[2] || path.join(path.dirname(fileURLToPath(import.meta.url)), 'work', 'rnf-batch-src');
 const TMP = path.join(SRC, '_pregather_tmp');
 const COVERAGE = path.join(SRC, 'pregather-coverage.json');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

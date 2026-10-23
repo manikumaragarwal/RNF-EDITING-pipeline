@@ -48,7 +48,7 @@ When you get a new correction, add it at the top in the same format.
 - B-roll = **real video only, never stills**. Prefer YouTube gameplay over Steam trailers (trailers cut to static title cards and fade to black).
 - Split = **true 50/50 centre split**: gameplay fills the top 960px, the face is cropped into the bottom 960px. (Supersedes the 40/60 overlay-hug from the first reels.)
 - Clip inputs use `-stream_loop -1` so a short clip loops instead of freezing.
-- **Watch the b-roll move before delivering.** A PTS bug once froze the last ~2s of every split window in every reel. Now automated in `rnf-check.mjs` (motion MIN > 3 across ~8 sampled frames per window), but still look yourself.
+- **Watch the b-roll move before delivering.** A PTS bug once froze the last ~2s of every split window in every reel. The HyperFrames path checks this automatically (`hf/finish.mjs`: render vs source motion per window). The old engine's `rnf-check.mjs` does not, so look yourself there.
 - Music must be audible: `audibleMusicStart()` skips silent gaps in long mixes.
 
 ### 2026-09-26: Caption look
